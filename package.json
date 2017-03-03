@@ -1,0 +1,28 @@
+{
+  "name": "codeheroes-service",
+  "version": "1.0.0",
+  "description": "Code Heroes Service",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mschilling/codeheroes-service.git"
+  },
+  "author": "Michael Schilling",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mschilling/codeheroes-service/issues"
+  },
+  "homepage": "https://github.com/mschilling/codeheroes-service#readme",
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "firebase": "^3.6.4",
+    "moment": "^2.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^3.12.2",
+    "eslint-config-google": "^0.7.1"
+  }
+}
