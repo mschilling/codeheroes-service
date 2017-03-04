@@ -2,7 +2,7 @@
 
 require('dotenv').config({ silent: true });
 const config = require('./config');
-const moment = require('moment');
+// const moment = require('moment');
 
 const firebase = require('firebase');
 firebase.initializeApp({
