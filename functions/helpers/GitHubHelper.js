@@ -12,7 +12,9 @@ class GitHubHelper {
         timestamp: commit.timestamp,
         repo: payload.repository.name,
         message: commit.message,
-        user: ( commit.author ? commit.author.username : commit.committer.username )
+        user: ( (commit.author && commit.author.username) ? commit.author.username :
+          ( (commit.committer & commit.committer.username) ? commit.committer.username :
+          'unknown' ) )
       });
     });
     return commits;
