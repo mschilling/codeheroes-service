@@ -2,15 +2,15 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
-
 const gh = require('./helpers/GitHubHelper');
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/functions/write-firebase-functions
-
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  response.send('Hello from Firebase!');
-});
+exports.processGitHubInput = functions.database.ref('/raw/github/{pushId}')
+  .onWrite(event => {
+    const commits = gh.parseCommits(event.data.val());
+    return commits.forEach((commit) => {
+      event.data.ref.root.child('/on/commit').push(commit);
+    });
+  });
 
 // Listens for new messages added to /messages/:pushId/original and creates an
 // uppercase version of the message to /messages/:pushId/uppercase
@@ -34,16 +34,11 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 //     return event.data.ref.set(obj);
 //   });
 
-exports.processGitHubInput = functions.database.ref('/raw/github/{pushId}')
-  .onWrite(event => {
-    // const obj = event.data.val();
-    // const targetRef = event.data.ref.root.child(`test/michael/${event.params.pushId}`);
-    // console.log('processGitHubInput', event.params.pushId, obj);
-    // obj.timestamp = new Date().toISOString();
-    // return targetRef.set(obj);
-
-    const commits = gh.parseCommits(event.data.val());
-    return commits.forEach( (commit) => {
-        event.data.ref.root.child('/on/commit').push(commit);
-    });
-  });
+// exports.dummy = functions.database.ref('/raw/github/{pushId}')
+//   .onWrite(event => {
+//     const obj = event.data.val();
+//     const targetRef = event.data.ref.root.child(`test/michael/${event.params.pushId}`);
+//     console.log('processGitHubInput', event.params.pushId, obj);
+//     obj.timestamp = new Date().toISOString();
+//     return targetRef.set(obj);
+//   });
