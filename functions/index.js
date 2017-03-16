@@ -26,14 +26,6 @@ exports.processGitHubInput = functions.database.ref('/raw/github/{pushId}')
 //     return event.data.ref.parent.child('uppercase').set(uppercase);
 //   });
 
-// exports.addTimestamp = functions.database.ref('/cloud_test/{pushId}')
-//   .onWrite(event => {
-//     const obj = event.data.val();
-//     console.log('Uppercasing', event.params.pushId, obj);
-//     obj.timestamp = new Date().toISOString();
-//     return event.data.ref.set(obj);
-//   });
-
 // exports.dummy = functions.database.ref('/raw/github/{pushId}')
 //   .onWrite(event => {
 //     const obj = event.data.val();
