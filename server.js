@@ -17,6 +17,7 @@ const ref = firebase.database().ref();
 
 trackMetrics();
 
+
 function trackMetrics() {
   const commitsRef = ref.child('on/commit');
 
