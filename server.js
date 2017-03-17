@@ -41,7 +41,6 @@ function onCommit(snapshot) {
         .then(() => incrementScore(`metrics/project/commits_per_day/${dayKey}/${meta.projectKey}`))
         .then(() => incrementScore(`metrics/project/commits_per_week/${weekKey}/${meta.projectKey}`))
         .then(() => incrementScore(`metrics/project/commits_per_month/${monthKey}/${meta.projectKey}`))
-
         ;
     });
 }
