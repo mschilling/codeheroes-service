@@ -8,12 +8,12 @@ exports.processGitHubInput = functions.database.ref('/raw/github/{pushId}')
     const commits = gh.parseCommits(event.data.val());
     return commits.forEach((commit) => {
       event.data.ref.root.child('/on/commit').push(commit);
+    }).then(() => {
+      const push = gh.parsePush(event.data.val());
+      if(push) {
+        event.data.ref.root.child('/on/push').push(push);
+      }
     });
-
-    const push = gh.parsePush(event.data.val());
-    if(push) {
-      return event.data.ref.root.child('/on/push').push(push);
-    }
   });
 
 
