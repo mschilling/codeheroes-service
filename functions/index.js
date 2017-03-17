@@ -8,14 +8,16 @@ exports.processGitHubInput = functions.database.ref('/raw/github/{pushId}')
     const commits = gh.parseCommits(event.data.val());
     return commits.forEach((commit) => {
       event.data.ref.root.child('/on/commit').push(commit);
-    }).then(() => {
-      const push = gh.parsePush(event.data.val());
-      if(push) {
-        event.data.ref.root.child('/on/push').push(push);
-      }
     });
   });
 
+exports.processGitHubInputPushes = functions.database.ref('/raw/github/{pushId}')
+  .onWrite(event => {
+    const push = gh.parsePush(event.data.val());
+    if(push) {
+      event.data.ref.root.child('/on/push').push(push);
+    }
+  });
 
 // Listens for new messages added to /messages/:pushId/original and creates an
 // uppercase version of the message to /messages/:pushId/uppercase
