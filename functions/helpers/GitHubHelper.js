@@ -32,6 +32,18 @@ class GitHubHelper {
     });
     return commits;
   }
+
+  static parsePush(payload) {
+    if(!payload || !payload.pusher) return;
+
+    const push = {};
+    push.timestamp = new Date().toISOString();
+    push.user = (payload.pusher || {}).name;
+    push.repo = payload.repository.name;
+    push.ref = payload.ref;
+    push.commits_count = (payload.commits || []).length;
+    return push;
+  }
 }
 
 module.exports = GitHubHelper;
