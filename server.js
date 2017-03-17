@@ -34,10 +34,6 @@ function onCommit(snapshot) {
       const weekKey = timestamp.format('YYYY') + ('0' + timestamp.isoWeek()).slice(-2);
       const monthKey = timestamp.format('YYYYMM');
 
-      // console.log(meta);
-
-      // if(!c.distinct) return Promise.resolve(true);
-
       return Promise.resolve(true)
         .then(() => incrementScore(`metrics/user/commits_per_day/${dayKey}/${meta.userKey}`))
         .then(() => incrementScore(`metrics/user/commits_per_week/${weekKey}/${meta.userKey}`))
