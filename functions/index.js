@@ -1,7 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
-
 const gh = require('./helpers/GitHubHelper');
 
 exports.processGitHubInput = functions.database.ref('/raw/github/{pushId}')
@@ -10,7 +9,13 @@ exports.processGitHubInput = functions.database.ref('/raw/github/{pushId}')
     return commits.forEach((commit) => {
       event.data.ref.root.child('/on/commit').push(commit);
     });
+
+    const push = gh.parsePush(event.data.val());
+    if(push) {
+      return event.data.ref.root.child('/on/push').push(push);
+    }
   });
+
 
 // Listens for new messages added to /messages/:pushId/original and creates an
 // uppercase version of the message to /messages/:pushId/uppercase
