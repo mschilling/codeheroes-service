@@ -14,7 +14,7 @@ exports.processGitHubInput = functions.database.ref('/raw/github/{pushId}')
 exports.processGitHubInputPushes = functions.database.ref('/raw/github/{pushId}')
   .onWrite(event => {
     const push = gh.parsePush(event.data.val());
-    if(push) {
+    if (push) {
       event.data.ref.root.child('/on/push').push(push);
     }
   });
