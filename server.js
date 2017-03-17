@@ -80,6 +80,7 @@ function incrementScore(scoreKey) {
       value = { score: 0 };
     }
     value.score += 1;
+    value.orderKey = (1 / value.score);
     value.lastUpdate = new Date().getTime();
     return value;
   });
