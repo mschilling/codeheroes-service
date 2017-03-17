@@ -26,7 +26,6 @@ function trackMetrics() {
 }
 
 function onCommit(snapshot) {
-
   getMetaFromCommit(snapshot.val())
     .then((meta) => {
       const timestamp = moment(meta.timestamp);
@@ -43,8 +42,6 @@ function onCommit(snapshot) {
         .then(() => incrementScore(`metrics/project/commits_per_week/${weekKey}/${meta.projectKey}`))
         .then(() => incrementScore(`metrics/project/commits_per_month/${monthKey}/${meta.projectKey}`))
 
-        // .then( () => incrementScore(`metrics/user/commits_today/${userKey}`))
-        // .then( () => incrementScore(`metrics/project/commits_today/${projectKey}`))
         ;
     });
 }
