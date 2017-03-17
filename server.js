@@ -13,16 +13,15 @@ firebase.initializeApp({
 
 const ref = firebase.database().ref();
 
-// ref.child('users_lookup/by_').set(true);
-
 trackMetrics();
-
 
 function trackMetrics() {
   const commitsRef = ref.child('on/commit');
+  const pushRef = ref.child('on/push');
 
   ref.child('metrics').remove().then(() => {
-    commitsRef.limitToLast(10000).on('child_added', onCommit);
+    commitsRef.limitToLast(100000).on('child_added', onCommit);
+    pushRef.limitToLast(100000).on('child_added', onPush);
   });
 }
 
@@ -53,13 +52,30 @@ function onCommit(snapshot) {
         // .then( () => incrementScore(`metrics/project/commits_today/${projectKey}`))
         ;
     });
+}
 
+function onPush(snapshot) {
+  getMetaFromCommit(snapshot.val())
+    .then((meta) => {
+      const timestamp = moment(meta.timestamp);
+      const dayKey = timestamp.format('YYYYMMDD');
+      const weekKey = timestamp.format('YYYY') + ('0' + timestamp.isoWeek()).slice(-2);
+      const monthKey = timestamp.format('YYYYMM');
 
+      return Promise.resolve(true)
+        .then(() => incrementScore(`metrics/user/pushes_per_day/${dayKey}/${meta.userKey}`))
+        .then(() => incrementScore(`metrics/user/pushes_per_week/${weekKey}/${meta.userKey}`))
+        .then(() => incrementScore(`metrics/user/pushes_per_month/${monthKey}/${meta.userKey}`))
 
+        .then(() => incrementScore(`metrics/project/pushes_per_day/${dayKey}/${meta.projectKey}`))
+        .then(() => incrementScore(`metrics/project/pushes_per_week/${weekKey}/${meta.projectKey}`))
+        .then(() => incrementScore(`metrics/project/pushes_per_month/${monthKey}/${meta.projectKey}`))
+        ;
+    });
 }
 
 function incrementScore(scoreKey) {
-  return ref.child(scoreKey).transaction(function (value) {
+  return ref.child(scoreKey).transaction(function(value) {
     if (!value) {
       value = { score: 0 };
     }
@@ -81,10 +97,10 @@ function getMetaFromCommit(input) {
       // console.log(snapshot.ref.toString());
       if(snapshot.val()) {
         meta.userKey = snapshot.val();
-            console.log(snapshot.val());
+            // console.log(snapshot.val());
         return ref.child('users').orderByChild('jira_username').equalTo(snapshot.val()).limitToLast(1).once('value')
           .then( (userSnapshot) => {
-            console.log('User snapshot: ', userSnapshot.val(), userSnapshot.key);
+            // console.log('User snapshot: ', userSnapshot.val(), userSnapshot.key);
             // const user = userSnapshot.val()[Object.keys(userSnapshot.val())];
             // if(user) {
               // meta.userKey = user.name;
