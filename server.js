@@ -26,7 +26,6 @@ function trackMetrics() {
 }
 
 function onCommit(snapshot) {
-  // console.log(snapshot.val());
 
   getMetaFromCommit(snapshot.val())
     .then((meta) => {
