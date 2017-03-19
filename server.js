@@ -18,29 +18,39 @@ trackMetrics();
 function trackMetrics() {
   const commitsRef = ref.child('on/commit');
   const pushRef = ref.child('on/push');
+  const maxResults = 100000;
 
   ref.child('metrics').remove().then(() => {
-    commitsRef.limitToLast(100000).on('child_added', onCommit);
-    pushRef.limitToLast(100000).on('child_added', onPush);
+    commitsRef.limitToLast(maxResults).on('child_added', onCommit);
+    pushRef.limitToLast(maxResults).on('child_added', onPush);
   });
 }
 
 function onCommit(snapshot) {
-  getMetaFromCommit(snapshot.val())
+  const commit = snapshot.val();
+
+  getGitHubUser(commit)
     .then((meta) => {
-      const timestamp = moment(meta.timestamp);
+      const timestamp = moment(commit.timestamp);
       const dayKey = timestamp.format('YYYYMMDD');
       const weekKey = timestamp.format('YYYY') + ('0' + timestamp.isoWeek()).slice(-2);
       const monthKey = timestamp.format('YYYYMM');
 
-      return Promise.resolve(true)
-        .then(() => incrementScore(`metrics/user/commits_per_day/${dayKey}/${meta.userKey}`))
-        .then(() => incrementScore(`metrics/user/commits_per_week/${weekKey}/${meta.userKey}`))
-        .then(() => incrementScore(`metrics/user/commits_per_month/${monthKey}/${meta.userKey}`))
+      const userKey = meta.username;
+      const projectKey = commit.repo;
 
-        .then(() => incrementScore(`metrics/project/commits_per_day/${dayKey}/${meta.projectKey}`))
-        .then(() => incrementScore(`metrics/project/commits_per_week/${weekKey}/${meta.projectKey}`))
-        .then(() => incrementScore(`metrics/project/commits_per_month/${monthKey}/${meta.projectKey}`))
+      if(commit.message) {
+        meta.message = commit.message;
+      }
+
+      return Promise.resolve(true)
+        .then(() => incrementScore(`metrics/user/commits_per_day/${dayKey}/${userKey}`, meta))
+        .then(() => incrementScore(`metrics/user/commits_per_week/${weekKey}/${userKey}`, meta))
+        .then(() => incrementScore(`metrics/user/commits_per_month/${monthKey}/${userKey}`, meta))
+
+        .then(() => incrementScore(`metrics/project/commits_per_day/${dayKey}/${projectKey}`))
+        .then(() => incrementScore(`metrics/project/commits_per_week/${weekKey}/${projectKey}`))
+        .then(() => incrementScore(`metrics/project/commits_per_month/${monthKey}/${projectKey}`))
         ;
     });
 }
@@ -65,7 +75,7 @@ function onPush(snapshot) {
     });
 }
 
-function incrementScore(scoreKey) {
+function incrementScore(scoreKey, meta) {
   return ref.child(scoreKey).transaction(function(value) {
     if (!value) {
       value = { score: 0 };
@@ -73,6 +83,13 @@ function incrementScore(scoreKey) {
     value.score += 1;
     value.orderKey = (1 / value.score);
     value.lastUpdate = new Date().getTime();
+
+    if(meta) {
+      if(meta.avatar) value.avatar = meta.avatar;
+      if(meta.name) value.name = meta.name;
+      if(meta.message) value.message = meta.message;
+    };
+
     return value;
   });
 }
@@ -80,8 +97,10 @@ function incrementScore(scoreKey) {
 function getMetaFromCommit(input) {
   let meta = {};
 
+  // console.log('getMetaFromCommit', input);
+
   meta.timestamp = input.timestamp;
-  meta.userKey = input.user.name ? input.user.name : input.user;
+  meta.userKey = input.author_username || input.author_username || 'onbekend';
   meta.projectKey = input.repo;
 
   return ref.child(`user_lookup/github_user/by_name/${meta.userKey}`).once('value')
@@ -103,3 +122,19 @@ function getMetaFromCommit(input) {
     .then( () => meta);
 }
 
+function getGitHubUser(input) {
+  const username = input.author_username || 'undefined';
+
+  return ref.child(`github_users/${username}`).once('value')
+    .then( (snapshot) => {
+      let profile = {
+        name: 'unknown'
+      };
+
+      if(snapshot.val()) {
+        profile = snapshot.val();
+      }
+
+      return Promise.resolve(profile);
+    });
+}

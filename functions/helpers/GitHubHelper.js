@@ -1,34 +1,32 @@
 'use strict';
 
-function parseUser(commit) {
-  if(!(commit.author || {} ).username)
-  console.log('author', commit.author, ' <--> ', 'comitter', commit.committer);
-}
-
 class GitHubHelper {
   static parseCommits(payload) {
     if(!payload || !payload.commits) return [];
 
     const commits = [];
     payload.commits.forEach( (commit) => {
-      // console.log(commit.author);
-      parseUser(commit);
-      commits.push({
+      const author = commit.author || {};
+      const committer = commit.committer || {};
+
+      const entry = {
         id: commit.id,
         // treeId: commit.tree_id,
         timestamp: commit.timestamp,
         distinct: commit.distinct,
         repo: payload.repository.name,
         message: commit.message,
-        user: (
-          ( commit.author && commit.author.username ) ? commit.author.username : (
-              ( commit.committer & commit.committer.username ) ? commit.committer.username : (
-                ( commit.author & commit.author.name ) ? commit.committer.username :
-                'onbekend'
-              )
-            )
-          )
-      });
+      };
+
+      if(author.name) entry.author_name = author.name;
+      if(author.username) entry.author_username = author.username;
+      if(author.email) entry.author_email = author.email;
+
+      if(committer.name) entry.committer_name = committer.name;
+      if(committer.username) entry.committer_username = committer.username;
+      if(committer.email) entry.committer_email = committer.email;
+
+      commits.push(entry);
     });
     return commits;
   }
