@@ -48,7 +48,7 @@ function onCommit(snapshot) {
 
         actions.push(incrementScore(`metrics/user/commits_per_day/${dayKey}/${userKey}`, meta));
         actions.push(incrementScore(`metrics/user/commits_per_week/${weekKey}/${userKey}`, meta));
-        actions.push(incrementScore(`metrics/user/commits_per_week/${weekKey}/${userKey}`, meta));
+        actions.push(incrementScore(`metrics/user/commits_per_month/${monthKey}/${userKey}`, meta));
       }
 
       const projectKey = commit.repo;
