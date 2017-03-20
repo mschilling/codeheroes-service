@@ -3,7 +3,6 @@
 require('dotenv').config({ silent: true });
 const config = require('./config');
 const moment = require('moment');
-const chalk = require('chalk');
 
 const firebase = require('firebase');
 firebase.initializeApp({
@@ -18,7 +17,7 @@ trackMetrics();
 function trackMetrics() {
   const commitsRef = ref.child('on/commit');
   const pushRef = ref.child('on/push');
-  const maxResults = 1000000;
+  const maxResults = 400000;
 
   ref.child('metrics').remove().then(() => {
     commitsRef.limitToLast(maxResults).on('child_added', onCommit);
@@ -28,6 +27,7 @@ function trackMetrics() {
 
 function onCommit(snapshot) {
   const commit = snapshot.val();
+  // console.log(commit);
 
   getGitHubUser(commit)
     .then((meta) => {
@@ -40,7 +40,7 @@ function onCommit(snapshot) {
 
       if (meta && meta.username) {
         const userKey = meta.username;
-        console.log('include user', meta);
+        // console.log('include user', meta);
 
         if (commit.message) {
           meta.message = commit.message;
@@ -61,22 +61,44 @@ function onCommit(snapshot) {
 }
 
 function onPush(snapshot) {
-  getMetaFromCommit(snapshot.val())
+  const data = snapshot.val();
+  getGitHubUser(snapshot.val())
     .then((meta) => {
-      const timestamp = moment(meta.timestamp);
+      const timestamp = moment(data.timestamp);
       const dayKey = timestamp.format('YYYYMMDD');
       const weekKey = timestamp.format('YYYY') + ('0' + timestamp.isoWeek()).slice(-2);
       const monthKey = timestamp.format('YYYYMM');
 
-      return Promise.resolve(true)
-        .then(() => incrementScore(`metrics/user/pushes_per_day/${dayKey}/${meta.userKey}`))
-        .then(() => incrementScore(`metrics/user/pushes_per_week/${weekKey}/${meta.userKey}`))
-        .then(() => incrementScore(`metrics/user/pushes_per_month/${monthKey}/${meta.userKey}`))
+      const actions = [];
 
-        .then(() => incrementScore(`metrics/project/pushes_per_day/${dayKey}/${meta.projectKey}`))
-        .then(() => incrementScore(`metrics/project/pushes_per_week/${weekKey}/${meta.projectKey}`))
-        .then(() => incrementScore(`metrics/project/pushes_per_month/${monthKey}/${meta.projectKey}`))
-        ;
+      if (meta && meta.username) {
+        const userKey = meta.username;
+        console.log('include user', meta);
+
+        if (data.message) {
+          meta.message = data.message;
+        }
+
+        actions.push(incrementScore(`metrics/user/pushes_per_day/${dayKey}/${userKey}`, meta));
+        actions.push(incrementScore(`metrics/user/pushes_per_week/${weekKey}/${userKey}`, meta));
+        actions.push(incrementScore(`metrics/user/pushes_per_month/${monthKey}/${userKey}`, meta));
+      }
+
+      const projectKey = data.repo;
+      actions.push(incrementScore(`metrics/project/pushes_per_day/${dayKey}/${projectKey}`));
+      actions.push(incrementScore(`metrics/project/pushes_per_week/${weekKey}/${projectKey}`));
+      actions.push(incrementScore(`metrics/project/pushes_per_month/${monthKey}/${projectKey}`));
+
+      return Promise.all(actions);
+      // return Promise.resolve(true)
+      //   .then(() => incrementScore(`metrics/user/pushes_per_day/${dayKey}/${meta.userKey}`))
+      //   .then(() => incrementScore(`metrics/user/pushes_per_week/${weekKey}/${meta.userKey}`))
+      //   .then(() => incrementScore(`metrics/user/pushes_per_month/${monthKey}/${meta.userKey}`))
+
+      //   .then(() => incrementScore(`metrics/project/pushes_per_day/${dayKey}/${meta.projectKey}`))
+      //   .then(() => incrementScore(`metrics/project/pushes_per_week/${weekKey}/${meta.projectKey}`))
+      //   .then(() => incrementScore(`metrics/project/pushes_per_month/${monthKey}/${meta.projectKey}`))
+      //   ;
     });
 }
 
