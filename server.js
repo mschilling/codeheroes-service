@@ -57,15 +57,6 @@ function onCommit(snapshot) {
       actions.push(incrementScore(`metrics/project/commits_per_month/${monthKey}/${projectKey}`));
 
       return Promise.all(actions).then(() => console.log('done updating', commit.id));
-      // return Promise.resolve(true)
-      //   .then(() => incrementScore(`metrics/user/commits_per_day/${dayKey}/${userKey}`, meta))
-      //   .then(() => incrementScore(`metrics/user/commits_per_week/${weekKey}/${userKey}`, meta))
-      //   .then(() => incrementScore(`metrics/user/commits_per_week/${weekKey}/${userKey}`, meta))
-
-      //   .then(() => incrementScore(`metrics/project/commits_per_day/${dayKey}/${projectKey}`))
-      //   .then(() => incrementScore(`metrics/project/commits_per_week/${weekKey}/${projectKey}`))
-      //   .then(() => incrementScore(`metrics/project/commits_per_month/${monthKey}/${projectKey}`))
-      //   ;
     });
 }
 
