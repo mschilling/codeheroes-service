@@ -24,7 +24,7 @@ exports.onGitHubPush = functions.database.ref('/raw/github/{pushId}')
   .onWrite(event => {
     const data = event.data.val();
 
-    if (gh.getEventType() == ghEventTypes.push) {
+    if (gh.getEventType(data) == ghEventTypes.push) {
       // const push = gh.parsePush(event.data.val());
       // if (push) {
       //   event.data.ref.root.child('/log/onPush').push(push);
