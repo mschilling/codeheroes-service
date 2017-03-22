@@ -59,8 +59,11 @@ class GitHubHelper {
     const { name, organization } = payload.repository;
     const repo = {
       name: name,
-      organisation: organization
     };
+
+    if(organization) {
+      repo.organization = organization;
+    }
 
     return repo;
   }
