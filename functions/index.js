@@ -20,16 +20,24 @@ exports.processGitHubInputPushes = functions.database.ref('/raw/github/{pushId}'
     }
   });
 
-exports.onGitHubPush = functions.database.ref('/raw/github/{pushId}')
+// exports.onGitHubPush = functions.database.ref('/raw/github/{pushId}')
+//   .onWrite(event => {
+//     const data = event.data.val();
+
+//     if (gh.getEventType(data) == ghEventTypes.push) {
+//       // const push = gh.parsePush(event.data.val());
+//       // if (push) {
+//       //   event.data.ref.root.child('/log/onPush').push(push);
+//       // }
+//       console.log('onGitHubPush', commits);
+//     }
+//   });
+
+exports.onGitHubCommits = functions.database.ref('/raw/github/{pushId}')
   .onWrite(event => {
     const data = event.data.val();
 
     if (gh.getEventType(data) == ghEventTypes.push) {
-      // const push = gh.parsePush(event.data.val());
-      // if (push) {
-      //   event.data.ref.root.child('/log/onPush').push(push);
-      // }
-
       const commits = gh.parseCommitsFromPayload(data);
       if (commits.length > 0) {
         return event.data.ref.root.child('/log/onCommits').push(commits);
@@ -37,7 +45,6 @@ exports.onGitHubPush = functions.database.ref('/raw/github/{pushId}')
       console.log('onGitHubPush', commits);
     }
   });
-
 // Listens for new messages added to /messages/:pushId/original and creates an
 // uppercase version of the message to /messages/:pushId/uppercase
 // exports.makeUppercase = functions.database.ref('/cloud_test/{pushId}/original')
