@@ -32,7 +32,7 @@ exports.onGitHubPush = functions.database.ref('/raw/github/{pushId}')
 
       const commits = gh.parseCommitsFromPayload(data);
       if (commits.length > 0) {
-        event.data.ref.root.child('/log/onCommits').push(commits);
+        return event.data.ref.root.child('/log/onCommits').push(commits);
       }
       console.log('onGitHubPush', commits);
     }
