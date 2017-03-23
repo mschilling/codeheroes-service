@@ -1,3 +1,5 @@
+'use strict';
+
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
@@ -35,12 +37,13 @@ exports.processGitHubInputPushes = functions.database.ref('/raw/github/{pushId}'
 
 exports.onGitHubCommits = functions.database.ref('/raw/github/{pushId}')
   .onWrite(event => {
+    const ref = event.data.adminRef;
     const data = event.data.val();
 
     if (gh.getEventType(data) == ghEventTypes.push) {
       const commits = gh.parseCommitsFromPayload(data);
       if (commits.length > 0) {
-        return event.data.ref.root.child('/log/onCommits').push(commits);
+        return ref.root.child('/log-2/onCommits').push(commits);
       }
       console.log('onGitHubPush', commits);
     }
