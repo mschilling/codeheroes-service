@@ -54,15 +54,22 @@ class GitHubHelper {
     push.commits_count = (payload.commits || []).length;
     return push;
   }
-
   static parseRepoFromPayload(payload) {
-    const { name, organization } = payload.repository;
+    const { name, full_name: fullName, organization, owner } = payload.repository;
     const repo = {
       name: name,
     };
 
     if(organization) {
       repo.organization = organization;
+    }
+
+    if(fullName) {
+      repo.fullName = fullName;
+    }
+
+    if(owner) {
+      repo.owner = owner.name;
     }
 
     return repo;
