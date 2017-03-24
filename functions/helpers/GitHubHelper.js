@@ -99,6 +99,13 @@ class GitHubHelper {
       if (repo) {
         commit.repo = repo;
       }
+
+      if(!commit.user) {
+        const { pusher } = payload;
+        if(pusher) {
+          commit.user = pusher.name; // work-around for now
+        }
+      }
       commits.push(commit);
     });
     return commits.sort((a, b) => a > b ? 1 : -1);
