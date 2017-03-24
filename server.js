@@ -150,20 +150,22 @@ function incrementScoreProjectCommits(scoreKey, meta, commit) {
     value.orderKey = (1 / value.score);
     value.lastUpdate = new Date().getTime();
 
-    const repo = commit.repo;
-
     if (meta) {
       if (meta.avatar) value.avatar = meta.avatar;
       if (meta.name) value.name = meta.name;
       if (meta.message) value.message = meta.message;
     };
 
-    if(repo) {
-      value.repo = repo.fullName;
-      if(repo.avatar) {
-        value.avatar = repo.avatar;
+    if(commit) {
+      const repo = commit.repo;
+      if(repo) {
+        value.repo = repo.fullName;
+        if(repo.avatar) {
+          value.avatar = repo.avatar;
+        }
       }
     }
+
 
     return value;
   });
