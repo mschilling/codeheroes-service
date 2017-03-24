@@ -8,9 +8,12 @@ const ghEventTypes = require('./constants/github_event_types');
 
 exports.processGitHubInput = functions.database.ref('/raw/github/{pushId}')
   .onWrite(event => {
-    const commits = gh.parseCommits(event.data.val());
+    const ref = event.data.adminRef;
+    const data = event.data.val();
+
+    const commits = gh.parseCommitsFromPayload(data);
     return commits.forEach((commit) => {
-      event.data.ref.root.child('/on/commit').push(commit);
+      ref.root.child('/on/commit').push(commit);
     });
   });
 
@@ -35,16 +38,16 @@ exports.processGitHubInputPushes = functions.database.ref('/raw/github/{pushId}'
 //     }
 //   });
 
-exports.onGitHubCommits = functions.database.ref('/raw/github/{pushId}')
-  .onWrite(event => {
-    const ref = event.data.adminRef;
-    const data = event.data.val();
+// exports.onGitHubCommits = functions.database.ref('/raw/github/{pushId}')
+//   .onWrite(event => {
+//     const ref = event.data.adminRef;
+//     const data = event.data.val();
 
-    if (gh.getEventType(data) == ghEventTypes.push) {
-      const commits = gh.parseCommitsFromPayload(data);
-      if (commits.length > 0) {
-        return ref.root.child('/log-2/onCommits').push(commits);
-      }
-      console.log('onGitHubPush', commits);
-    }
-  });
+//     if (gh.getEventType(data) == ghEventTypes.push) {
+//       const commits = gh.parseCommitsFromPayload(data);
+//       if (commits.length > 0) {
+//         return ref.root.child('/log-2/onCommits').push(commits);
+//       }
+//       console.log('onGitHubPush', commits);
+//     }
+//   });

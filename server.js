@@ -19,7 +19,7 @@ trackMetrics();
 function trackMetrics() {
   const commitsRef = ref.child('on/commit');
   const pushRef = ref.child('on/push');
-  const maxResults = 400000;
+  const maxResults = 10000000;
 
   ref.child('metrics').remove().then(() => {
     commitsRef.limitToLast(maxResults).on('child_added', onCommit);
@@ -29,7 +29,7 @@ function trackMetrics() {
 
 function onCommit(snapshot) {
   const commit = snapshot.val();
-  // console.log(commit);
+  console.log(commit);
 
   getGitHubUser(commit)
     .then((meta) => {
@@ -48,20 +48,26 @@ function onCommit(snapshot) {
           meta.message = commit.message;
         }
 
-        actions.push(incrementScore(`metrics/user/commits_per_day/${dayKey}/${userKey}`, meta));
-        actions.push(incrementScore(`metrics/user/commits_per_week/${weekKey}/${userKey}`, meta));
-        actions.push(incrementScore(`metrics/user/commits_per_month/${monthKey}/${userKey}`, meta));
+        actions.push(incrementScore(`metrics/user/commits_per_day/${dayKey}/${userKey}`, meta, commit));
+        actions.push(incrementScore(`metrics/user/commits_per_week/${weekKey}/${userKey}`, meta, commit));
+        actions.push(incrementScore(`metrics/user/commits_per_month/${monthKey}/${userKey}`, meta, commit));
       }
 
-      const projectKey = encodeAsFirebaseKey(commit.repo);
-      console.log(projectKey);
+      if(!commit.repo.fullName) {
+        console.log(commit);
+        return;
+      }
+
+      const projectKey = encodeAsFirebaseKey(commit.repo.fullName);
       // const repoMeta = gh.parseRepoFromPayload()
-      actions.push(incrementScore(`metrics/project/commits_per_day/${dayKey}/${projectKey}`));
-      actions.push(incrementScore(`metrics/project/commits_per_week/${weekKey}/${projectKey}`));
-      actions.push(incrementScore(`metrics/project/commits_per_month/${monthKey}/${projectKey}`));
+      actions.push(incrementScoreProjectCommits(`metrics/project/commits_per_day/${dayKey}/${projectKey}`, meta, commit));
+      actions.push(incrementScoreProjectCommits(`metrics/project/commits_per_week/${weekKey}/${projectKey}`, meta, commit));
+      actions.push(incrementScoreProjectCommits(`metrics/project/commits_per_month/${monthKey}/${projectKey}`, meta, commit));
 
       return Promise.all(actions).then(() => console.log('done updating', commit.id));
-    });
+    })
+    .catch( (error) => console.log(error))
+    ;
 }
 
 function onPush(snapshot) {
@@ -88,7 +94,8 @@ function onPush(snapshot) {
         actions.push(incrementScore(`metrics/user/pushes_per_month/${monthKey}/${userKey}`, meta));
       }
 
-      const projectKey = data.repo;
+      // const projectKey = data.repo;
+      const projectKey = encodeAsFirebaseKey(data.repo);
       actions.push(incrementScore(`metrics/project/pushes_per_day/${dayKey}/${projectKey}`));
       actions.push(incrementScore(`metrics/project/pushes_per_week/${weekKey}/${projectKey}`));
       actions.push(incrementScore(`metrics/project/pushes_per_month/${monthKey}/${projectKey}`));
@@ -106,7 +113,7 @@ function onPush(snapshot) {
     });
 }
 
-function incrementScore(scoreKey, meta) {
+function incrementScore(scoreKey, meta, commit) {
   return ref.child(scoreKey).transaction(function (value) {
     if (!value) {
       value = { score: 0 };
@@ -115,11 +122,48 @@ function incrementScore(scoreKey, meta) {
     value.orderKey = (1 / value.score);
     value.lastUpdate = new Date().getTime();
 
+    const repo = commit.repo;
+
     if (meta) {
       if (meta.avatar) value.avatar = meta.avatar;
       if (meta.name) value.name = meta.name;
       if (meta.message) value.message = meta.message;
     };
+
+    if(repo) {
+      value.repo = repo.fullName;
+      if(!value.avatar) {
+        value.avatar = repo.avatar;
+      }
+    }
+
+    return value;
+  });
+}
+
+function incrementScoreProjectCommits(scoreKey, meta, commit) {
+  return ref.child(scoreKey).transaction(function (value) {
+    if (!value) {
+      value = { score: 0 };
+    }
+    value.score += 1;
+    value.orderKey = (1 / value.score);
+    value.lastUpdate = new Date().getTime();
+
+    const repo = commit.repo;
+
+    if (meta) {
+      if (meta.avatar) value.avatar = meta.avatar;
+      if (meta.name) value.name = meta.name;
+      if (meta.message) value.message = meta.message;
+    };
+
+    if(repo) {
+      value.repo = repo.fullName;
+      if(repo.avatar) {
+        value.avatar = repo.avatar;
+      }
+    }
 
     return value;
   });
@@ -131,7 +175,7 @@ function getMetaFromCommit(input) {
   // console.log('getMetaFromCommit', input);
 
   meta.timestamp = input.timestamp;
-  meta.userKey = input.author_username || input.author_username || 'onbekend';
+  meta.userKey = input.user;
   meta.projectKey = input.repo;
 
   return ref.child(`user_lookup/github_user/by_name/${meta.userKey}`).once('value')
@@ -154,7 +198,7 @@ function getMetaFromCommit(input) {
 }
 
 function getGitHubUser(input) {
-  const username = input.author_username;
+  const username = input.user;
 
   if (!username || username == 'undefined') return Promise.resolve(null);
 
@@ -172,19 +216,10 @@ function getGitHubUser(input) {
     });
 }
 
-function encodeAsFirebaseKey(string) {
-  return string.replace(/\%/g, '%25')
-    .replace(/\./g, '%2E')
-    .replace(/\#/g, '%23')
-    .replace(/\$/g, '%24')
-    .replace(/\//g, '%2F')
-    .replace(/\[/g, '%5B')
-    .replace(/\]/g, '%5D');
-};
-
-function encodeAsFirebaseKey(string) {
-  return string
+function encodeAsFirebaseKey(input) {
+  return input
     .replace(/\./g, '_')
+    .replace(/\//g, '%2F')
     // .replace(/\%/g, '%25')
     // .replace(/\./g, '%2E')
     // .replace(/\#/g, '%23')
