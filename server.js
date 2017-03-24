@@ -11,6 +11,8 @@ firebase.initializeApp({
 });
 
 const ref = firebase.database().ref();
+const gh = require('./functions/helpers/GitHubHelper');
+const ghEventTypes = require('./functions/constants/github_event_types');
 
 trackMetrics();
 
@@ -51,7 +53,9 @@ function onCommit(snapshot) {
         actions.push(incrementScore(`metrics/user/commits_per_month/${monthKey}/${userKey}`, meta));
       }
 
-      const projectKey = commit.repo;
+      const projectKey = encodeAsFirebaseKey(commit.repo);
+      console.log(projectKey);
+      // const repoMeta = gh.parseRepoFromPayload()
       actions.push(incrementScore(`metrics/project/commits_per_day/${dayKey}/${projectKey}`));
       actions.push(incrementScore(`metrics/project/commits_per_week/${weekKey}/${projectKey}`));
       actions.push(incrementScore(`metrics/project/commits_per_month/${monthKey}/${projectKey}`));
@@ -167,3 +171,26 @@ function getGitHubUser(input) {
       return Promise.resolve(profile);
     });
 }
+
+function encodeAsFirebaseKey(string) {
+  return string.replace(/\%/g, '%25')
+    .replace(/\./g, '%2E')
+    .replace(/\#/g, '%23')
+    .replace(/\$/g, '%24')
+    .replace(/\//g, '%2F')
+    .replace(/\[/g, '%5B')
+    .replace(/\]/g, '%5D');
+};
+
+function encodeAsFirebaseKey(string) {
+  return string
+    .replace(/\./g, '_')
+    // .replace(/\%/g, '%25')
+    // .replace(/\./g, '%2E')
+    // .replace(/\#/g, '%23')
+    // .replace(/\$/g, '%24')
+    // .replace(/\//g, '%2F')
+    // .replace(/\[/g, '%5B')
+    // .replace(/\]/g, '%5D')
+    ;
+};

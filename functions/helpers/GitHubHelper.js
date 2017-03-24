@@ -10,6 +10,14 @@ class GitHubHelper {
       return githubEventTypes.push;
     } else if (payload.pull_request) {
       return githubEventTypes.pullRequest;
+    } else if (payload.issue) {
+      switch (payload.action) {
+        case 'opened':
+          return githubEventTypes.issueOpened;
+        case 'closed':
+          return githubEventTypes.issueClosed;
+      }
+      return githubEventTypes.issueUndefined;
     }
     return githubEventTypes.undefined;
   }
@@ -60,15 +68,15 @@ class GitHubHelper {
       name: name,
     };
 
-    if(organization) {
+    if (organization) {
       repo.organization = organization;
     }
 
-    if(fullName) {
+    if (fullName) {
       repo.fullName = fullName;
     }
 
-    if(owner) {
+    if (owner) {
       repo.owner = owner.name;
     }
 
@@ -87,7 +95,7 @@ class GitHubHelper {
       }
       commits.push(commit);
     });
-    return commits.sort( (a,b) => a > b ? 1 : -1);
+    return commits.sort((a, b) => a > b ? 1 : -1);
   }
 
   static parseCommit(source) {
