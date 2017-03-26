@@ -1,0 +1,48 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+      "log": {
+        ".read": "false",
+        ".write": "true"
+      },
+    "on": {
+      "commit": {
+        ".read": "false",
+        ".write": "true"
+      },
+      "push": {
+        ".read": "false",
+        ".write": "true"
+      },
+    },
+    "metrics": {
+      ".read": "true",
+      ".write": "false"
+    },
+    "test": {
+      ".read": "true",
+      ".write": "true"
+    },
+    "raw": {
+      ".read": "false",
+      ".write": "false",
+      "jira": {
+        ".read": "false",
+        ".write": "true"
+      },
+      "github": {
+        ".read": "false",
+        ".write": "true"
+      }
+    },
+    "views": {
+      ".read": "true",
+      ".write": "false",
+      "dashboard": {
+        ".read": "true",
+        ".write": "false"
+      }
+    }
+  }
+}
