@@ -2,10 +2,6 @@
   "rules": {
     ".read": "auth != null",
     ".write": "auth != null",
-      "log": {
-        ".read": "false",
-        ".write": "true"
-      },
     "on": {
       "commit": {
         ".read": "false",
@@ -20,10 +16,6 @@
       ".read": "true",
       ".write": "false"
     },
-    "test": {
-      ".read": "true",
-      ".write": "true"
-    },
     "raw": {
       ".read": "false",
       ".write": "false",
@@ -34,14 +26,6 @@
       "github": {
         ".read": "false",
         ".write": "true"
-      }
-    },
-    "views": {
-      ".read": "true",
-      ".write": "false",
-      "dashboard": {
-        ".read": "true",
-        ".write": "false"
       }
     }
   }
