@@ -14,7 +14,7 @@
       "push": {
         ".read": "false",
         ".write": "true"
-      },
+      }
     },
     "metrics": {
       ".read": "true",
