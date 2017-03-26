@@ -29,19 +29,6 @@ exports.processGitHubInputPushes = functions.database.ref('/raw/github/{pushId}'
     }
   });
 
-// exports.onGitHubPush = functions.database.ref('/raw/github/{pushId}')
-//   .onWrite(event => {
-//     const data = event.data.val();
-
-//     if (gh.getEventType(data) == ghEventTypes.push) {
-//       // const push = gh.parsePush(event.data.val());
-//       // if (push) {
-//       //   event.data.ref.root.child('/log/onPush').push(push);
-//       // }
-//       console.log('onGitHubPush', commits);
-//     }
-//   });
-
 exports.onGitHubPushEvent = functions.database.ref('/raw/github/{pushId}')
   .onWrite(event => {
     const ref = event.data.adminRef.root;
