@@ -13,7 +13,7 @@ if [ $TRAVIS_BRANCH == "master" ]; then
     if [ $TRAVIS_PULL_REQUEST == false ]; then
         echo "Initiate deployment :)"
         firebase use $1 --token "${FIREBASE_API_TOKEN}"
-        firebase deploy --only functions --token "${FIREBASE_API_TOKEN}"
+        firebase deploy --token "${FIREBASE_API_TOKEN}"
     else
         echo "Is a pull request..."
         echo "Not deploying."
