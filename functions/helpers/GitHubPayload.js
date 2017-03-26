@@ -16,6 +16,10 @@ class GitHubPayload {
     return this._repository;
   }
 
+  get commits() {
+    return this._commits || [];
+  }
+
 }
 
 function initializeObject( obj, payload ) {
@@ -30,6 +34,7 @@ function initializeObject( obj, payload ) {
 
     obj._sender = parseSender(payload);
 
+    obj._commits = parseCommits(payload);
 }
 
 function parseEventType( payload ) {
@@ -95,5 +100,60 @@ function parseRepository(payload) {
 
   return repo;
 }
+
+function parseCommits(payload) {
+  if(!payload.commits) return [];
+
+  const commits = [];
+  const repo = parseRepository(payload);
+
+  payload.commits.forEach(payloadCommit => {
+    const commit = parseCommit(payloadCommit);
+    commit.repo = repo;
+
+    if(!commit.user) {
+      const { pusher } = payload;
+      if(pusher) {
+        commit.user = pusher.name; // work-around for now
+      }
+    }
+    commits.push(commit);
+  });
+  return commits.sort((a, b) => a > b ? 1 : -1);
+}
+
+function parseCommit(source) {
+  const commit = {};
+  const { id, timestamp, message, committer, author, distinct } = source;
+
+  if (id) {
+    commit.id = id;
+  }
+
+  if (timestamp) {
+    commit.timestamp = timestamp;
+  }
+
+  if (author) {
+    commit.author = author;
+  }
+
+  if (committer) {
+    commit.committer = committer;
+  }
+
+  if (author && author.username) {
+    commit.user = author.username;
+  }
+
+  if (message) {
+    commit.message = message;
+  }
+
+  commit.distinct = !!(distinct);
+
+  return commit;
+}
+
 
 module.exports = GitHubPayload;
