@@ -1,0 +1,32 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "on": {
+      "commit": {
+        ".read": "false",
+        ".write": "true"
+      },
+      "push": {
+        ".read": "false",
+        ".write": "true"
+      }
+    },
+    "metrics": {
+      ".read": "true",
+      ".write": "false"
+    },
+    "raw": {
+      ".read": "false",
+      ".write": "false",
+      "jira": {
+        ".read": "false",
+        ".write": "true"
+      },
+      "github": {
+        ".read": "false",
+        ".write": "true"
+      }
+    }
+  }
+}
