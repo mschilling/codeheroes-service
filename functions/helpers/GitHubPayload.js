@@ -74,24 +74,28 @@ function parseSender( payload ) {
 }
 
 function parseRepository(payload) {
+  if(!payload.repository) return;
+
   const { name, full_name: fullName, organization, owner } = payload.repository;
   const repo = {
     name: name,
   };
 
-  if (organization) {
-    repo.organization = organization;
-  } else if (owner) {
-    repo.avatar = owner.avatar_url;
-  }
-
-  if (payload.organization) {
-    repo.avatar = payload.organization.avatar_url;
-  }
-
   if (fullName) {
     repo.fullName = fullName;
   }
+
+  repo.avatar = owner.avatar_url;
+
+  if (organization) {
+    repo.organization = organization;
+  }
+
+  // if (payload.organization) {
+  //   repo.avatar = payload.organization.avatar_url;
+  //   console.log(payload.organization.avatar_url);
+  // }
+
 
   // if (owner) {
   //   repo.owner = {
@@ -112,7 +116,7 @@ function parseCommits(payload) {
 
   payload.commits.forEach(payloadCommit => {
     const commit = parseCommit(payloadCommit);
-    commit.repo = repo;
+    commit.repository = repo;
 
     if(!commit.user) {
       const { pusher } = payload;

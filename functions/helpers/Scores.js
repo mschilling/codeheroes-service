@@ -34,8 +34,8 @@ function onCommit( obj, commit ) {
   const userKey = commit.user;
 
   const scoreData = {};
-  scoreData.avatar = commit.repo.avatar;
-  scoreData.name = commit.name;
+  scoreData.avatar = commit.repository.avatar;
+  scoreData.name = commit.author.name;
   scoreData.message = commit.message;
 
     // if(scoreData) {
