@@ -11,6 +11,7 @@ firebase.initializeApp({
 });
 
 const ref = firebase.database().ref();
+const fh = require('./functions/helpers/FirebaseHelper');
 const gh = require('./functions/helpers/GitHubHelper');
 const ghEventTypes = require('./functions/constants/github_event_types');
 
@@ -29,7 +30,7 @@ function trackMetrics() {
 
 function onCommit(snapshot) {
   const commit = snapshot.val();
-  console.log(commit);
+  // console.log(commit);
 
   getGitHubUser(commit)
     .then((meta) => {
@@ -58,7 +59,7 @@ function onCommit(snapshot) {
         return;
       }
 
-      const projectKey = encodeAsFirebaseKey(commit.repo.fullName);
+      const projectKey = fh.encodeAsFirebaseKey(commit.repo.fullName);
       // const repoMeta = gh.parseRepoFromPayload()
       actions.push(incrementScoreProjectCommits(`metrics/project/commits_per_day/${dayKey}/${projectKey}`, meta, commit));
       actions.push(incrementScoreProjectCommits(`metrics/project/commits_per_week/${weekKey}/${projectKey}`, meta, commit));
@@ -95,7 +96,7 @@ function onPush(snapshot) {
       }
 
       // const projectKey = data.repo;
-      const projectKey = encodeAsFirebaseKey(data.repo);
+      const projectKey = fh.encodeAsFirebaseKey(data.repo);
       actions.push(incrementScore(`metrics/project/pushes_per_day/${dayKey}/${projectKey}`));
       actions.push(incrementScore(`metrics/project/pushes_per_week/${weekKey}/${projectKey}`));
       actions.push(incrementScore(`metrics/project/pushes_per_month/${monthKey}/${projectKey}`));
@@ -217,17 +218,3 @@ function getGitHubUser(input) {
       return Promise.resolve(profile);
     });
 }
-
-function encodeAsFirebaseKey(input) {
-  return input
-    .replace(/\./g, '_')
-    .replace(/\//g, '%2F')
-    // .replace(/\%/g, '%25')
-    // .replace(/\./g, '%2E')
-    // .replace(/\#/g, '%23')
-    // .replace(/\$/g, '%24')
-    // .replace(/\//g, '%2F')
-    // .replace(/\[/g, '%5B')
-    // .replace(/\]/g, '%5D')
-    ;
-};
