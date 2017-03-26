@@ -33,10 +33,10 @@ function onCommit( obj, commit ) {
 
   const userKey = commit.user;
 
-  const eventData = {};
-  eventData.avatar = commit.repo.avatar;
-  eventData.name = commit.name;
-  eventData.message = commit.message;
+  const scoreData = {};
+  scoreData.avatar = commit.repo.avatar;
+  scoreData.name = commit.name;
+  scoreData.message = commit.message;
 
     // if(scoreData) {
     //   value.repo = repo.fullName;
@@ -48,14 +48,14 @@ function onCommit( obj, commit ) {
 
   const actions = [];
 
-  actions.push(incrementScore(obj.ref.child(`scores/user/commits_per_day/${dayKey}/${userKey}`), commit));
-  actions.push(incrementScore(obj.ref.child(`scores/user/commits_per_week/${weekKey}/${userKey}`), commit));
-  actions.push(incrementScore(obj.ref.child(`scores/user/commits_per_month/${monthKey}/${userKey}`), commit));
+  actions.push(incrementScore(obj.ref.child(`${baseRef}/user/commits_per_day/${dayKey}/${userKey}`), scoreData, commit));
+  actions.push(incrementScore(obj.ref.child(`${baseRef}/user/commits_per_week/${weekKey}/${userKey}`), scoreData, commit));
+  actions.push(incrementScore(obj.ref.child(`${baseRef}/user/commits_per_month/${monthKey}/${userKey}`), scoreData, commit));
 
   return Promise.all(actions);
 }
 
-function incrementScore(scoreRef, meta) {
+function incrementScore(scoreRef, scoreData, otherData) {
   return scoreRef.transaction(function(value) {
     if (!value) {
       value = { score: 0 };
@@ -64,8 +64,12 @@ function incrementScore(scoreRef, meta) {
     value.orderKey = (1 / value.score);
     value.lastUpdate = new Date().getTime();
 
-    if(meta) {
-      value.meta = meta;
+    if(scoreData.name) value.name = scoreData.name;
+    if(scoreData.avatar) value.avatar = scoreData.avatar;
+    if(scoreData.message) value.message = scoreData.message;
+
+    if(otherData) {
+      value.meta = otherData;
     }
 
     return value;
