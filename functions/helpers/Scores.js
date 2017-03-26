@@ -2,7 +2,7 @@
 
 const moment = require('moment');
 // const eventTypes = require('../constants/github_event_types');
-const baseRef = 'scores';
+const baseRef = 'metrics';
 
 class Scores {
   constructor( firebaseRef ) {
