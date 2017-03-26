@@ -20,6 +20,9 @@ class GitHubPayload {
     return this._commits || [];
   }
 
+  get distinctCommits() {
+    return this.commits.filter( p => p.distinct );
+  }
 }
 
 function initializeObject( obj, payload ) {
