@@ -1,6 +1,7 @@
 'use strict';
 
 const moment = require('moment');
+const fh = require('../helpers/FirebaseHelper');
 // const eventTypes = require('../constants/github_event_types');
 const baseRef = 'metrics';
 
@@ -51,6 +52,19 @@ function onCommit( obj, commit ) {
   actions.push(incrementScore(obj.ref.child(`${baseRef}/user/commits_per_day/${dayKey}/${userKey}`), scoreData, commit));
   actions.push(incrementScore(obj.ref.child(`${baseRef}/user/commits_per_week/${weekKey}/${userKey}`), scoreData, commit));
   actions.push(incrementScore(obj.ref.child(`${baseRef}/user/commits_per_month/${monthKey}/${userKey}`), scoreData, commit));
+
+  const projectKey = fh.encodeAsFirebaseKey(commit.repository.fullName);
+
+  const repoScoreData = {};
+  repoScoreData.avatar = commit.repository.avatar;
+  repoScoreData.name = commit.repository.fullName;
+  repoScoreData.message = commit.message;
+
+  // const repoMeta = gh.parseRepoFromPayload()
+  actions.push(incrementScore(obj.ref.child(`${baseRef}/project/commits_per_day/${dayKey}/${projectKey}`), repoScoreData, commit));
+  actions.push(incrementScore(obj.ref.child(`${baseRef}/project/commits_per_week/${weekKey}/${projectKey}`), repoScoreData, commit));
+  actions.push(incrementScore(obj.ref.child(`${baseRef}/project/commits_per_month/${monthKey}/${projectKey})`), repoScoreData, commit));
+
 
   return Promise.all(actions);
 }
