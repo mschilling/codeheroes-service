@@ -33,11 +33,13 @@ function onCommit( obj, commit ) {
   const monthKey = timestamp.format('YYYYMM');
 
   const userKey = commit.user;
+  const avatarUrl = `https://github.com/${commit.user}.png?size=400`;
 
   const scoreData = {};
-  scoreData.avatar = commit.repository.avatar;
+  scoreData.avatar = avatarUrl;
   scoreData.name = commit.author.name;
   scoreData.message = commit.message;
+
 
     // if(scoreData) {
     //   value.repo = repo.fullName;
