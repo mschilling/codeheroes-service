@@ -6,6 +6,7 @@ admin.initializeApp(functions.config().firebase);
 
 const GitHubPayload = require('./helpers/GitHubPayload');
 const Scores = require('./helpers/Scores');
+const fh = require('./helpers/FirebaseHelper');
 
 const gh = require('./helpers/GitHubHelper');
 const ghEventTypes = require('./constants/github_event_types');
@@ -33,16 +34,27 @@ exports.onGitHubPushEvent = functions.database.ref('/raw/github/{pushId}')
   .onWrite(event => {
     const ref = event.data.adminRef.root;
     const data = event.data.val();
+    let appSettings;
 
     const github = new GitHubPayload(data);
-    if (github.eventType == ghEventTypes.push) {
-      const score = new Scores(ref);
-        // const actions = github.commits.map( () => )
-      return github.distinctCommits.forEach(c => {
-        score.onCommit(c);
+    fh.initialize(ref);
+
+    fh.getAppSettings()
+      .then((settings) => appSettings = settings)
+      .then(() => {
+        if(appSettings.excludeRepos.indexOf(github.repository.fullName) > -1) {
+          return Promise.resolve();
+        }
+
+        if (github.eventType == ghEventTypes.push) {
+          const score = new Scores(ref);
+            // const actions = github.commits.map( () => )
+          return github.distinctCommits.forEach(c => {
+            score.onCommit(c);
+          });
+        } else {
+          Promise.resolve();
+        }
       });
-    } else {
-      Promise.resolve();
-    }
   });
 

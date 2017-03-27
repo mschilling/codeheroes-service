@@ -4,18 +4,16 @@ let ref;
 
 class FirebaseHelper {
 
-
   static initialize(rootRef) {
     ref = rootRef;
   }
 
-  static getAppSettings(ref) {
-    return Promise.resolve(true)
-      .then( () => ref.child('appSettings').once('value') )
-      .then( (snapshot) => {
-      console.log(snapshot.val());
-      snapshot.val();
-    });
+  static getAppSettings() {
+    return ref.child('appSettings').once('value').then( (snapshot) => {
+        // console.log(snapshot.val());
+        // return Promise.resolve(true);
+        return snapshot.val();
+      });
   }
 
   static getGitHubUser(user) {

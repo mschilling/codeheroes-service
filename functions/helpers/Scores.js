@@ -79,6 +79,16 @@ function incrementScore(scoreRef, scoreData, otherData) {
 
     if (otherData) {
       value.meta = otherData;
+
+      if(otherData.user) { // committer
+        if(!value.users) {
+          value.users = [];
+        }
+
+        if(value.users.indexOf(otherData.user) === -1) {
+          value.users.push(otherData.user);
+        }
+      }
     }
 
     return value;
