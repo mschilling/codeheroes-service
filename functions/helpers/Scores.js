@@ -6,10 +6,9 @@ const fh = require('../helpers/FirebaseHelper');
 const baseRef = 'metrics';
 
 class Scores {
-  constructor( firebaseRef ) {
+  constructor(firebaseRef) {
     this.ref = firebaseRef;
-
-    initializeObject(this);
+    fh.initialize(firebaseRef);
   }
 
   get repository() {
@@ -22,57 +21,51 @@ class Scores {
 
 }
 
-function initializeObject(obj) {
-  // set obj ref
-}
+function onCommit(obj, commit) {
 
-function onCommit( obj, commit ) {
-  const timestamp = moment(commit.timestamp);
-  const dayKey = timestamp.format('YYYYMMDD');
-  const weekKey = timestamp.format('YYYY') + ('0' + timestamp.isoWeek()).slice(-2);
-  const monthKey = timestamp.format('YYYYMM');
+  return fh.getGitHubUser(commit.user).then((user) => {
+    if (!user) {
+      return Promise.resolve();
+    }
 
-  const userKey = commit.user;
-  const avatarUrl = `https://github.com/${commit.user}.png?size=460`;
+    const timestamp = moment(commit.timestamp);
+    const dayKey = timestamp.format('YYYYMMDD');
+    const weekKey = timestamp.format('YYYY') + ('0' + timestamp.isoWeek()).slice(-2);
+    const monthKey = timestamp.format('YYYYMM');
 
-  const scoreData = {};
-  scoreData.avatar = avatarUrl;
-  scoreData.name = commit.author.name;
-  scoreData.message = commit.message;
+    const userKey = user.username;
+    const avatarUrl = `https://github.com/${userKey}.png?size=460`;
 
+    const scoreData = {};
+    scoreData.avatar = avatarUrl;
+    scoreData.name = user.name;
+    scoreData.message = commit.message;
 
-    // if(scoreData) {
-    //   value.repo = repo.fullName;
-    //   if(!value.avatar) {
-    //     value.avatar = repo.avatar;
-    //   }
-    // }
+    const actions = [];
 
+    actions.push(incrementScore(obj.ref.child(`${baseRef}/user/commits_per_day/${dayKey}/${userKey}`), scoreData, commit));
+    actions.push(incrementScore(obj.ref.child(`${baseRef}/user/commits_per_week/${weekKey}/${userKey}`), scoreData, commit));
+    actions.push(incrementScore(obj.ref.child(`${baseRef}/user/commits_per_month/${monthKey}/${userKey}`), scoreData, commit));
 
-  const actions = [];
+    const projectKey = fh.encodeAsFirebaseKey(commit.repository.fullName);
 
-  actions.push(incrementScore(obj.ref.child(`${baseRef}/user/commits_per_day/${dayKey}/${userKey}`), scoreData, commit));
-  actions.push(incrementScore(obj.ref.child(`${baseRef}/user/commits_per_week/${weekKey}/${userKey}`), scoreData, commit));
-  actions.push(incrementScore(obj.ref.child(`${baseRef}/user/commits_per_month/${monthKey}/${userKey}`), scoreData, commit));
+    const repoScoreData = {};
+    repoScoreData.avatar = commit.repository.avatar;
+    repoScoreData.name = commit.repository.fullName;
+    repoScoreData.message = commit.message;
 
-  const projectKey = fh.encodeAsFirebaseKey(commit.repository.fullName);
-
-  const repoScoreData = {};
-  repoScoreData.avatar = commit.repository.avatar;
-  repoScoreData.name = commit.repository.fullName;
-  repoScoreData.message = commit.message;
-
-  // const repoMeta = gh.parseRepoFromPayload()
-  actions.push(incrementScore(obj.ref.child(`${baseRef}/project/commits_per_day/${dayKey}/${projectKey}`), repoScoreData, commit));
-  actions.push(incrementScore(obj.ref.child(`${baseRef}/project/commits_per_week/${weekKey}/${projectKey}`), repoScoreData, commit));
-  actions.push(incrementScore(obj.ref.child(`${baseRef}/project/commits_per_month/${monthKey}/${projectKey})`), repoScoreData, commit));
+    // const repoMeta = gh.parseRepoFromPayload()
+    actions.push(incrementScore(obj.ref.child(`${baseRef}/project/commits_per_day/${dayKey}/${projectKey}`), repoScoreData, commit));
+    actions.push(incrementScore(obj.ref.child(`${baseRef}/project/commits_per_week/${weekKey}/${projectKey}`), repoScoreData, commit));
+    actions.push(incrementScore(obj.ref.child(`${baseRef}/project/commits_per_month/${monthKey}/${projectKey})`), repoScoreData, commit));
 
 
-  return Promise.all(actions);
+    return Promise.all(actions);
+  });
 }
 
 function incrementScore(scoreRef, scoreData, otherData) {
-  return scoreRef.transaction(function(value) {
+  return scoreRef.transaction(function (value) {
     if (!value) {
       value = { score: 0 };
     }
@@ -80,11 +73,11 @@ function incrementScore(scoreRef, scoreData, otherData) {
     value.orderKey = (1 / value.score);
     value.lastUpdate = new Date().getTime();
 
-    if(scoreData.name) value.name = scoreData.name;
-    if(scoreData.avatar) value.avatar = scoreData.avatar;
-    if(scoreData.message) value.message = scoreData.message;
+    if (scoreData.name) value.name = scoreData.name;
+    if (scoreData.avatar) value.avatar = scoreData.avatar;
+    if (scoreData.message) value.message = scoreData.message;
 
-    if(otherData) {
+    if (otherData) {
       value.meta = otherData;
     }
 

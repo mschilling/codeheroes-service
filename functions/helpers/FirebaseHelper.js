@@ -1,6 +1,13 @@
 'use strict';
 
+let ref;
+
 class FirebaseHelper {
+
+
+  static initialize(rootRef) {
+    ref = rootRef;
+  }
 
   static getAppSettings(ref) {
     return Promise.resolve(true)
@@ -9,6 +16,17 @@ class FirebaseHelper {
       console.log(snapshot.val());
       snapshot.val();
     });
+  }
+
+  static getGitHubUser(user) {
+    return ref.child('github_users').child(user).once('value')
+      .then( (userSnapshot) => {
+        if(userSnapshot.exists()) {
+          return userSnapshot.val();
+        } else {
+          return Promise.resolve();
+        }
+      });
   }
 
   static encodeAsFirebaseKey(input) {
@@ -24,6 +42,7 @@ class FirebaseHelper {
       // .replace(/\]/g, '%5D')
       ;
   };
+
 }
 
 module.exports = FirebaseHelper;
