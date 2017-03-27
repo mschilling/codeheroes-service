@@ -33,7 +33,7 @@ function onCommit( obj, commit ) {
   const monthKey = timestamp.format('YYYYMM');
 
   const userKey = commit.user;
-  const avatarUrl = `https://github.com/${commit.user}.png?size=400`;
+  const avatarUrl = `https://github.com/${commit.user}.png?size=460`;
 
   const scoreData = {};
   scoreData.avatar = avatarUrl;
