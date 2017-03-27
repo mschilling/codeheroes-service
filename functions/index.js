@@ -45,10 +45,8 @@ exports.onGitHubPushEvent = functions.database.ref('/raw/github/{pushId}')
         if(appSettings.excludeRepos.indexOf(github.repository.fullName) > -1) {
           return Promise.resolve();
         }
-
         if (github.eventType == ghEventTypes.push) {
           const score = new Scores(ref);
-            // const actions = github.commits.map( () => )
           return github.distinctCommits.forEach(c => {
             score.onCommit(c);
           });
