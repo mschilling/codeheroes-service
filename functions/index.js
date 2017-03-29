@@ -4,12 +4,16 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
+const user = require('./user');
+
 const GitHubPayload = require('./helpers/GitHubPayload');
 const Scores = require('./helpers/Scores');
 const fh = require('./helpers/FirebaseHelper');
 
 const gh = require('./helpers/GitHubHelper');
 const ghEventTypes = require('./constants/github_event_types');
+
+exports.authNewUser = functions.auth.user().onCreate(user.createUser);
 
 exports.processGitHubInput = functions.database.ref('/raw/github/{pushId}')
   .onWrite(event => {
