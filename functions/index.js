@@ -5,13 +5,13 @@ const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
 const user = require('./user');
+const github = require('./github');
 
-const GitHubPayload = require('./helpers/GitHubPayload');
-const Scores = require('./helpers/Scores');
-const fh = require('./helpers/FirebaseHelper');
-
-const gh = require('./helpers/GitHubHelper');
-const ghEventTypes = require('./constants/github_event_types');
+// const GitHubPayload = require('./helpers/GitHubPayload');
+// const Scores = require('./helpers/Scores');
+// const fh = require('./helpers/FirebaseHelper');
+// const gh = require('./helpers/GitHubHelper');
+// const ghEventTypes = require('./constants/github_event_types');
 
 exports.authNewUser = functions.auth.user().onCreate(user.createUser);
 
@@ -35,28 +35,4 @@ exports.authNewUser = functions.auth.user().onCreate(user.createUser);
 //   });
 
 exports.onGitHubPushEvent = functions.database.ref('/raw/github/{pushId}')
-  .onWrite(event => {
-    const ref = event.data.adminRef.root;
-    const data = event.data.val();
-    let appSettings;
-
-    const github = new GitHubPayload(data);
-    fh.initialize(ref);
-
-    fh.getAppSettings()
-      .then((settings) => appSettings = settings)
-      .then(() => {
-        if(appSettings.excludeRepos.indexOf(github.repository.fullName) > -1) {
-          return Promise.resolve();
-        }
-        if (github.eventType == ghEventTypes.push) {
-          const score = new Scores(ref);
-          return github.distinctCommits.forEach(c => {
-            score.onCommit(c);
-          });
-        } else {
-          Promise.resolve();
-        }
-      });
-  });
-
+  .onWrite(github.onGitHubPushEvent);
