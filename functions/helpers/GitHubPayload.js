@@ -91,20 +91,6 @@ function parseRepository(payload) {
     repo.organization = organization;
   }
 
-  // if (payload.organization) {
-  //   repo.avatar = payload.organization.avatar_url;
-  //   console.log(payload.organization.avatar_url);
-  // }
-
-
-  // if (owner) {
-  //   repo.owner = {
-  //     login: owner.login,
-  //     name: owner.name,
-  //     type: owner.type
-  //   };
-  // }
-
   return repo;
 }
 
@@ -161,6 +147,5 @@ function parseCommit(source) {
 
   return commit;
 }
-
 
 module.exports = GitHubPayload;
