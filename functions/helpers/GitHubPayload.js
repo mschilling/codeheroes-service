@@ -126,7 +126,7 @@ function parseCommits(payload) {
     }
     commits.push(commit);
   });
-  return commits.sort((a, b) => a > b ? 1 : -1);
+  return commits.sort((a, b) => a.timestamp > b.timestamp ? 1 : -1);
 }
 
 function parseCommit(source) {
