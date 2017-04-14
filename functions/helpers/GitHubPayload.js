@@ -23,6 +23,15 @@ class GitHubPayload {
   get distinctCommits() {
     return this.commits.filter( p => p.distinct );
   }
+
+  get sender() {
+    return this._sender;
+  }
+
+  // calculate scores based on payload
+  getScores() {
+    return getScores(this);
+  }
 }
 
 function initializeObject( obj, payload ) {
@@ -146,6 +155,45 @@ function parseCommit(source) {
   commit.distinct = !!(distinct);
 
   return commit;
+}
+
+function getScores( obj ) {
+  const scores = [];
+  const sender = obj.sender || {};
+
+  const score = {
+    key: (sender.login || 'other'),
+    description: '',
+    points: 0,
+    eventType: obj.eventType,
+    counters: {}
+  };
+
+  switch(obj.eventType) {
+    case eventTypes.push:
+      score.points = 1;
+      score.description = 'Push-it good!';
+      score.counters.pushes = 1;
+      break;
+    case eventTypes.pullRequest:
+      score.points = 3;
+      score.description = 'Great pull request! Keem \'em coming!';
+      score.counters.pull_requests = 1;
+      break;
+    case eventTypes.issueClosed:
+      score.points = 2;
+      score.description = 'Finish him';
+      score.counters.issues_closed = 1;
+    break;
+    case eventTypes.issueOpened:
+      score.points = 5;
+      score.description = 'New issue comming through!';
+      score.counters.issues_opened = 1;
+    break;
+  }
+
+  scores.push(score);
+  return scores;
 }
 
 module.exports = GitHubPayload;
