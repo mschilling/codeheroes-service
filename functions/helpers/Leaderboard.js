@@ -39,6 +39,10 @@ function addScore(leaderboard, score) {
     item.count_pushes += score.counters.pushes;
   }
 
+  if(score.counters.commits) {
+    item.count_commits += score.counters.commits;
+  }
+
   if(score.counters.pull_requests) {
     item.count_pull_requests += score.counters.pull_requests;
   }
@@ -62,6 +66,7 @@ function newEntry(key) {
     count: 0,
     count_commits: 0,
     count_pushes: 0,
+    count_commits: 0,
     count_pull_requests: 0,
     count_issues_opened: 0,
     count_issues_closed: 0
@@ -72,6 +77,14 @@ function sort(leaderboard) {
   leaderboard.items.sort( (a, b) => a.totalScore < b.totalScore ? 1 : -1);
 
   leaderboard.items.forEach( (item, index) => {
+    if(item.position_prev !== (index + 1)) {
+      if( (index+1) < item.position_prev) {
+        item.pos = 'UP';
+      } else {
+        item.pos = 'DOWN';
+      }
+    }
+
     item.position_prev = item.position;
     item.position = index + 1;
   });

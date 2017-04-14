@@ -4,7 +4,7 @@ const eventTypes = require('../constants/github_event_types');
 
 class GitHubPayload {
 
-  constructor( payload ) {
+  constructor(payload) {
     initializeObject(this, payload);
   }
 
@@ -21,7 +21,7 @@ class GitHubPayload {
   }
 
   get distinctCommits() {
-    return this.commits.filter( p => p.distinct );
+    return this.commits.filter(p => p.distinct);
   }
 
   get sender() {
@@ -34,22 +34,22 @@ class GitHubPayload {
   }
 }
 
-function initializeObject( obj, payload ) {
-    // Save raw payload
-    obj._raw = payload;
+function initializeObject(obj, payload) {
+  // Save raw payload
+  obj._raw = payload;
 
-    obj._eventType = parseEventType(payload);
+  obj._eventType = parseEventType(payload);
 
-    obj._repository = parseRepository(payload);
+  obj._repository = parseRepository(payload);
 
-    obj._pusher = parsePusher(payload);
+  obj._pusher = parsePusher(payload);
 
-    obj._sender = parseSender(payload);
+  obj._sender = parseSender(payload);
 
-    obj._commits = parseCommits(payload);
+  obj._commits = parseCommits(payload);
 }
 
-function parseEventType( payload ) {
+function parseEventType(payload) {
   if (!payload) return eventTypes.undefined;
 
   if (payload.pusher) {
@@ -68,22 +68,22 @@ function parseEventType( payload ) {
   return eventTypes.undefined;
 }
 
-function parsePusher( payload ) {
+function parsePusher(payload) {
   const { pusher } = payload;
-  if(!pusher)
+  if (!pusher)
     return;
   return pusher;
 }
 
-function parseSender( payload ) {
+function parseSender(payload) {
   const { sender } = payload;
-  if(!sender)
+  if (!sender)
     return;
   return sender;
 }
 
 function parseRepository(payload) {
-  if(!payload.repository) return;
+  if (!payload.repository) return;
 
   const { name, full_name: fullName, organization, owner } = payload.repository;
   const repo = {
@@ -104,7 +104,7 @@ function parseRepository(payload) {
 }
 
 function parseCommits(payload) {
-  if(!payload.commits) return [];
+  if (!payload.commits) return [];
 
   const commits = [];
   const repo = parseRepository(payload);
@@ -113,9 +113,9 @@ function parseCommits(payload) {
     const commit = parseCommit(payloadCommit);
     commit.repository = repo;
 
-    if(!commit.user) {
+    if (!commit.user) {
       const { pusher } = payload;
-      if(pusher) {
+      if (pusher) {
         commit.user = pusher.name; // work-around for now
       }
     }
@@ -157,8 +157,8 @@ function parseCommit(source) {
   return commit;
 }
 
-function getScores( obj ) {
-  const scores = [];
+function getScores(obj) {
+  let scores = [];
   const sender = obj.sender || {};
 
   const score = {
@@ -169,11 +169,13 @@ function getScores( obj ) {
     counters: {}
   };
 
-  switch(obj.eventType) {
+  switch (obj.eventType) {
     case eventTypes.push:
       score.points = 1;
       score.description = 'Push-it good!';
       score.counters.pushes = 1;
+
+      scores = scores.concat( getScoresFromCommits(obj) );
       break;
     case eventTypes.pullRequest:
       score.points = 3;
@@ -184,15 +186,40 @@ function getScores( obj ) {
       score.points = 2;
       score.description = 'Finish him';
       score.counters.issues_closed = 1;
-    break;
+      break;
     case eventTypes.issueOpened:
       score.points = 5;
       score.description = 'New issue comming through!';
       score.counters.issues_opened = 1;
-    break;
+      break;
   }
 
   scores.push(score);
+  return scores;
+}
+
+function getScoresFromCommits(obj) {
+  const scores = [];
+
+  if (obj.distinctCommits.length === 0) {
+    return scores;
+  }
+
+  obj.distinctCommits.forEach(commit => {
+    const score = {
+      key: commit.user, // (sender.login || 'other'),
+      description: '',
+      points: 0,
+      eventType: obj.eventType,
+      counters: {}
+    };
+
+    score.points = 1;
+    score.description = 'Bit by bit, peace by peace ..';
+    score.counters.commits = 1;
+
+    scores.push(score);
+  });
   return scores;
 }
 
