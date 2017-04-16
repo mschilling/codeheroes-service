@@ -208,16 +208,13 @@ function getScoresFromCommits(obj) {
   obj.distinctCommits.forEach(commit => {
     const score = {
       key: commit.user, // (sender.login || 'other'),
-      description: '',
-      points: 0,
+      description: 'Bit by bit, peace by peace ..',
+      points: 1,
       eventType: obj.eventType,
       counters: {}
     };
 
-    score.points = 1;
-    score.description = 'Bit by bit, peace by peace ..';
     score.counters.commits = 1;
-
     scores.push(score);
   });
   return scores;
