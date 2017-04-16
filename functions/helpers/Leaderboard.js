@@ -32,7 +32,7 @@ function addScore(leaderboard, score) {
     leaderboard.items.push(item);
   }
 
-  item.totalScore += score.points;
+  item.score += score.points;
   item.count += 1;
 
   if(score.counters.pushes) {
@@ -62,7 +62,7 @@ function newEntry(key) {
   return {
     key: key,
     position: 0,
-    totalScore: 0,
+    score: 0,
     count: 0,
     count_commits: 0,
     count_pushes: 0,
@@ -74,14 +74,14 @@ function newEntry(key) {
 }
 
 function sort(leaderboard) {
-  leaderboard.items.sort( (a, b) => a.totalScore < b.totalScore ? 1 : -1);
+  leaderboard.items.sort( (a, b) => a.score < b.score ? 1 : -1);
 
   leaderboard.items.forEach( (item, index) => {
     if(item.position_prev !== (index + 1)) {
       if( (index+1) < item.position_prev) {
-        item.pos = 'UP';
+        item.dir = 'asc';
       } else {
-        item.pos = 'DOWN';
+        item.dir = 'desc';
       }
     }
 
