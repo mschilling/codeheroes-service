@@ -27,6 +27,18 @@ class FirebaseHelper {
       });
   }
 
+  static getGitHubUsers() {
+    return ref.child('github_users').once('value')
+      .then( (userSnapshot) => {
+        if(userSnapshot.exists()) {
+          return userSnapshot.val();
+        } else {
+          return Promise.resolve();
+        }
+      });
+  }
+
+
   static encodeAsFirebaseKey(input) {
     return input
       .replace(/\./g, '_')
