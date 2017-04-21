@@ -1,10 +1,10 @@
 'use strict';
 
  const SCORE_CONSTANTS = {
-  push: 1,
+  push: 0,
   commit: 1,
   pullRequest: 3,
-  githubIssueOpened: 5,
+  githubIssueOpened: 2,
   githubIssueClosed: 2
 };
 
