@@ -1,7 +1,7 @@
 'use strict';
 
 const eventTypes = require('../constants/jira_event_types');
-// const scoreConstants = require('../constants/score_constants');
+const scoreConstants = require('../constants/score_constants');
 
 class JiraPayload {
 
@@ -58,10 +58,10 @@ function parseUser(payload) {
 
 function getScores(obj) {
   let scores = [];
-  const sender = obj.sender || {};
+  const user = obj.user || {};
 
   const score = {
-    key: (sender.login || 'other'),
+    key: (user.name || 'other'),
     description: '',
     points: 0,
     eventType: obj.eventType,
@@ -69,27 +69,15 @@ function getScores(obj) {
   };
 
   switch (obj.eventType) {
-    case eventTypes.push:
-      score.points = scoreConstants.push;
-      score.description = 'Push-it good!';
-      score.counters.pushes = 1;
-
-      scores = scores.concat( getScoresFromCommits(obj) );
-      break;
-    case eventTypes.pullRequest:
-      score.points = scoreConstants.pullRequest;
-      score.description = 'Great pull request! Keem \'em coming!';
-      score.counters.pull_requests = 1;
+    case eventTypes.issueResolved:
+      score.points = scoreConstants.jiraIssueResolved;
+      score.description = 'Great! You\'ve resolved an issue!';
+      // score.counters.pushes = 1;
       break;
     case eventTypes.issueClosed:
-      score.points = scoreConstants.githubIssueClosed;
-      score.description = 'Finish him';
-      score.counters.issues_closed = 1;
-      break;
-    case eventTypes.issueOpened:
-      score.points = scoreConstants.githubIssueOpened;
-      score.description = 'New issue comming through!';
-      score.counters.issues_opened = 1;
+      score.points = scoreConstants.jiraIssueClosed;
+      score.description = 'Issues--';
+      // score.counters.pull_requests = 1;
       break;
   }
 
