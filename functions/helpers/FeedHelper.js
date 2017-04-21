@@ -27,18 +27,18 @@ function addToFeed(snapshot, timestamp = null) {
 
   switch (sourceKey) {
     case 'github': {
+      const github = new GitHubPayload(obj);
       if (!timestamp) {
         timestamp = github.timestamp;
       }
-      const github = new GitHubPayload(obj);
       obj._eventArgs.type = github.eventType;
       break;
     }
     case 'jira': {
+      const jira = new JiraPayload(obj);
       if (!timestamp) {
         timestamp = new Date(obj.timestamp).toISOString();
       }
-      const jira = new JiraPayload(obj);
       obj._eventArgs.type = jira.eventType;
       break;
     }
