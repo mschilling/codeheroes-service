@@ -29,6 +29,11 @@ class GitHubPayload {
     return this._sender;
   }
 
+  get timestamp() {
+    return this._timestamp;
+  }
+
+
   // calculate scores based on payload
   getScores() {
     return getScores(this);
@@ -48,6 +53,8 @@ function initializeObject(obj, payload) {
   obj._sender = parseSender(payload);
 
   obj._commits = parseCommits(payload);
+
+  obj._timestamp = parseTimestamp(payload);
 }
 
 function parseEventType(payload) {
@@ -156,6 +163,14 @@ function parseCommit(source) {
   commit.distinct = !!(distinct);
 
   return commit;
+}
+
+function parseTimestamp(payload) {
+  if (payload.head_commit) {
+    return payload.head_commit.timestamp;
+  }
+  return null;
+  // return new Date().toISOString();
 }
 
 function getScores(obj) {
