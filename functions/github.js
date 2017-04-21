@@ -38,25 +38,6 @@ function processGitHubPayload(evt) {
   return FeedHelper.addToFeed(evt.data);
 }
 
-// exports.processGitHubInput = functions.database.ref('/raw/github/{pushId}')
-//   .onWrite(event => {
-//     const ref = event.data.adminRef;
-//     const data = event.data.val();
-
-//     const commits = gh.parseCommitsFromPayload(data);
-//     return commits.forEach((commit) => {
-//       ref.root.child('/on/commit').push(commit);
-//     });
-//   });
-
-// exports.processGitHubInputPushes = functions.database.ref('/raw/github/{pushId}')
-//   .onWrite(event => {
-//     const push = gh.parsePush(event.data.val());
-//     if (push) {
-//       event.data.ref.root.child('/on/push').push(push);
-//     }
-//   });
-
 module.exports = {
   onGitHubPushEvent: onGitHubPushEvent,
   processGitHubPayload: processGitHubPayload
