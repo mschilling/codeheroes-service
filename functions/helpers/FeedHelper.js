@@ -15,7 +15,7 @@ class FeedHelper {
   }
 }
 
-function addToFeed(snapshot) {
+function addToFeed(snapshot, timestamp = null) {
   const obj = snapshot.val();
 
   const sourceKey = snapshot.ref.parent.key;
@@ -26,18 +26,25 @@ function addToFeed(snapshot) {
 
   switch (sourceKey) {
     case 'github': {
-      obj._eventArgs.timestamp = getTimestampFromGithubPayload(obj);
+      if (!timestamp) {
+        timestamp = getTimestampFromGithubPayload(obj);
+      }
       const github = new GitHubPayload(obj);
       obj._eventArgs.type = github.eventType;
       break;
     }
     case 'jira': {
-      obj._eventArgs.timestamp = new Date(obj.timestamp).toISOString();
+      if (!timestamp) {
+        timestamp = new Date(obj.timestamp).toISOString();
+      }
       const jira = new JiraPayload(obj);
       obj._eventArgs.type = jira.eventType;
       break;
     }
   }
+
+  obj._eventArgs.timestamp = timestamp;
+
   return feedRef.child(snapshot.key).set(obj);
 }
 
