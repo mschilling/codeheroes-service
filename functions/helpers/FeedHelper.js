@@ -3,6 +3,7 @@
 let feedRef;
 const GitHubPayload = require('../helpers/GitHubPayload');
 const JiraPayload = require('../helpers/JiraPayload');
+const fh = require('../helpers/FirebaseHelper');
 
 class FeedHelper {
 
@@ -27,7 +28,7 @@ function addToFeed(snapshot, timestamp = null) {
   switch (sourceKey) {
     case 'github': {
       if (!timestamp) {
-        timestamp = getTimestampFromGithubPayload(obj);
+        timestamp = github.timestamp;
       }
       const github = new GitHubPayload(obj);
       obj._eventArgs.type = github.eventType;
@@ -43,16 +44,13 @@ function addToFeed(snapshot, timestamp = null) {
     }
   }
 
+  if(!timestamp) {
+    timestamp = fh.getTimestampFromKey(snapshot.key);
+  }
+
   obj._eventArgs.timestamp = timestamp;
 
   return feedRef.child(snapshot.key).set(obj);
-}
-
-function getTimestampFromGithubPayload(payload) {
-  if (payload.head_commit) {
-    return payload.head_commit.timestamp;
-  }
-  return new Date().toISOString();
 }
 
 module.exports = FeedHelper;
