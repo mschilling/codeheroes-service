@@ -14,7 +14,12 @@ const authNewUser = functions.auth.user().onCreate(user.createUser);
 const onGitHubPushEvent = functions.database.ref('/raw/github/{pushId}')
   .onWrite(github.onGitHubPushEvent);
 
+// Process GitHub raw data into feed entry
+const githubPayloadToFeed = functions.database.ref('/raw/github/{pushId}')
+  .onWrite(github.processGitHubPayload);
+
 module.exports = {
     authNewUser: authNewUser,
-    onGitHubPushEvent: onGitHubPushEvent
+    onGitHubPushEvent: onGitHubPushEvent,
+    githubPayloadToFeed: githubPayloadToFeed
 };

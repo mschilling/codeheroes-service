@@ -4,6 +4,8 @@ const GitHubPayload = require('./helpers/GitHubPayload');
 const Scores = require('./helpers/Scores');
 const fh = require('./helpers/FirebaseHelper');
 const eventTypes = require('./constants/github_event_types');
+const FeedHelper = require('./helpers/FeedHelper');
+
 
 function onGitHubPushEvent(evt) {
   const ref = evt.data.adminRef.root;
@@ -30,6 +32,12 @@ function onGitHubPushEvent(evt) {
     });
 }
 
+function processGitHubPayload(evt) {
+  const ref = evt.data.adminRef.root;
+  FeedHelper.setTargetRef(ref.child('feed'));
+  return FeedHelper.addToFeed(evt.data);
+}
+
 // exports.processGitHubInput = functions.database.ref('/raw/github/{pushId}')
 //   .onWrite(event => {
 //     const ref = event.data.adminRef;
@@ -50,5 +58,6 @@ function onGitHubPushEvent(evt) {
 //   });
 
 module.exports = {
-  onGitHubPushEvent: onGitHubPushEvent
+  onGitHubPushEvent: onGitHubPushEvent,
+  processGitHubPayload: processGitHubPayload
 };
