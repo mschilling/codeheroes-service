@@ -23,8 +23,18 @@ const githubPayloadToFeed = functions.database.ref('/raw/github/{pushId}')
 const jiraPayloadToFeed = functions.database.ref('/raw/jira/{pushId}')
   .onWrite(jira.processJiraPayload);
 
+const ProcessPayloads = functions.database.ref('/raw/{source}/{pushId}')
+  .onWrite((evt) => {
+    const ref = evt.data.adminRef.root;
+    const data = evt.data.val();
+    data._source = evt.data.source;
+    data._timestamp = (new Date()).toDateString();
+    ref.child('echo/events').child(evt.params.pushId).set(data);
+  });
+
 module.exports = {
     authNewUser: authNewUser,
+    ProcessPayloads: ProcessPayloads,
     onGitHubPushEvent: onGitHubPushEvent,
     githubPayloadToFeed: githubPayloadToFeed,
     jiraPayloadToFeed: jiraPayloadToFeed
