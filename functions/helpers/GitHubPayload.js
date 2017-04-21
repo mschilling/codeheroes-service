@@ -1,6 +1,7 @@
 'use strict';
 
 const eventTypes = require('../constants/github_event_types');
+const scoreConstants = require('../constants/score_constants');
 
 class GitHubPayload {
 
@@ -171,24 +172,24 @@ function getScores(obj) {
 
   switch (obj.eventType) {
     case eventTypes.push:
-      score.points = 1;
+      score.points = scoreConstants.push;
       score.description = 'Push-it good!';
       score.counters.pushes = 1;
 
       scores = scores.concat( getScoresFromCommits(obj) );
       break;
     case eventTypes.pullRequest:
-      score.points = 3;
+      score.points = scoreConstants.pullRequest;
       score.description = 'Great pull request! Keem \'em coming!';
       score.counters.pull_requests = 1;
       break;
     case eventTypes.issueClosed:
-      score.points = 2;
+      score.points = scoreConstants.githubIssueClosed;
       score.description = 'Finish him';
       score.counters.issues_closed = 1;
       break;
     case eventTypes.issueOpened:
-      score.points = 5;
+      score.points = scoreConstants.githubIssueOpened;
       score.description = 'New issue comming through!';
       score.counters.issues_opened = 1;
       break;
@@ -209,7 +210,7 @@ function getScoresFromCommits(obj) {
     const score = {
       key: commit.user, // (sender.login || 'other'),
       description: 'Bit by bit, peace by peace ..',
-      points: 1,
+      points: scoreConstants.commit,
       eventType: obj.eventType,
       counters: {}
     };
