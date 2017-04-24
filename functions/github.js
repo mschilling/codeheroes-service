@@ -38,7 +38,6 @@ function processGitHubPayload(evt) {
 }
 
 module.exports = {
-  onQueueItemAdded: onQueueItemAdded,
   onGitHubPushEvent: onGitHubPushEvent,
   processGitHubPayload: processGitHubPayload
 };

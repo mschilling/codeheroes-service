@@ -41,12 +41,6 @@ const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
 const ProcessHooksFromQueue = functions.database.ref('/queues/{hook}/{pushId}')
   .onWrite(queue.processHookFromQueue);
 
-/**
- * This Function updates the `/lastmodified` with the timestamp of the last write to `/chat/$message`.
- */
-// exports.touch = functions.database.ref('/chat/{message}').onWrite(
-//     event => admin.database().ref('/lastmodified').set(event.timestamp));
-
 module.exports = {
     authNewUser: authNewUser,
     ProcessPayloads: ProcessPayloads,
@@ -54,6 +48,5 @@ module.exports = {
     onGitHubPushEvent: onGitHubPushEvent,
     githubPayloadToFeed: githubPayloadToFeed,
     jiraPayloadToFeed: jiraPayloadToFeed,
-    // ProcessGithubFromQueue: ProcessGithubFromQueue,
     ProcessHooksFromQueue: ProcessHooksFromQueue
 };
