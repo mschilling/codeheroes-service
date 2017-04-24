@@ -21,7 +21,7 @@ function processHookFromQueue(evt) {
   const ref = evt.data.adminRef.root;
   const hook = evt.params.hook;
   const eventData = evt.data.val();
-  const source = null;
+  let source = null;
 
   switch (hook) {
     case 'github-hooks':
