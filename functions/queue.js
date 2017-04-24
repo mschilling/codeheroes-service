@@ -44,9 +44,8 @@ function processHookFromQueue(evt) {
   return ref.child('raw').child(source).child(evt.data.key).once('value', function(snapshot) {
     const data = snapshot.val();
     data._meta = eventData;
-    return ref.child(paths.feedData).child(snapshot.key).set(data)
-      .then(() => evt.data.ref.remove());
-  });
+    return ref.child(paths.feedData).child(snapshot.key).set(data);
+  }).then(() => ref.child(paths.queueRoot).child(source + '-hooks').child(evt.data.key).remove());
 }
 
 function getChildPath(source) {
