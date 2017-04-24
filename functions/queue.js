@@ -29,36 +29,32 @@ function processHookFromQueue(evt) {
   }
 
   const ref = evt.data.adminRef.root;
-  const hook = evt.params.hook;
+  // const hook = evt.params.hook;
   const eventData = evt.data.val();
-  let source = null;
+  // let source = null;
+  let source = evt.params.source;
 
-  switch (hook) {
-    case 'github-hooks':
-      source = 'github';
-      break;
-    case 'jira-hooks':
-      source = 'jira';
-      break;
-    case 'jenkins-hooks':
-      source = 'jenkins';
-      break;
-    case 'travis-hooks':
-      source = 'travis';
-      break;
-    default:
-      // nothing to do?
-      return Promise.resolve();
-  }
+  // switch (hook) {
+  //   case 'github-hooks':
+  //     source = 'github';
+  //     break;
+  //   case 'jira-hooks':
+  //     source = 'jira';
+  //     break;
+  //   case 'jenkins-hooks':
+  //     source = 'jenkins';
+  //     break;
+  //   case 'travis-hooks':
+  //     source = 'travis';
+  //     break;
+  //   default:
+  //     // nothing to do?
+  //     return Promise.resolve();
+  // }
 
   return ref.child('raw').child(source).child(evt.data.key).once('value')
     .then((snapshot) => {
       const data = snapshot.val();
-      // fails when directly assigning object eventData (when deleting afterwards, it seems by reference)
-      // data._meta = {
-      //   timestamp: eventData.timestamp,
-      //   source: eventData.source
-      // };
       data._meta = eventData;
       return ref.child(paths.feedData).child(snapshot.key).set(data);
     }).then(() => evt.data.ref.remove())
