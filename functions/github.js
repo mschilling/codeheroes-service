@@ -15,7 +15,7 @@ function onQueueItemAdded(evt) {
     const data = snapshot.val();
     data._meta = eventData;
     ref.child(paths.feedData).child(snapshot.key).set(data);
-  });
+  }).then( () => evt.data.ref.remove());
 }
 
 function onGitHubPushEvent(evt) {

@@ -37,8 +37,11 @@ const ProcessPayloads = functions.database.ref('/raw/{source}/{pushId}')
 const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
   .onWrite(queue.addHookToQueue);
 
-const ProcessGithubFromQueue = functions.database.ref('/queues/github-hooks/{pushId}')
-  .onWrite(github.onQueueItemAdded);
+const ProcessHooksFromQueue = functions.database.ref('/queues/{source}-hooks/{pushId}')
+  .onWrite(queue.processHookFromQueue);
+
+// const ProcessGithubFromQueue = functions.database.ref('/queues/github-hooks/{pushId}')
+//   .onWrite(github.onQueueItemAdded);
 
 /**
  * This Function updates the `/lastmodified` with the timestamp of the last write to `/chat/$message`.
@@ -53,5 +56,6 @@ module.exports = {
     onGitHubPushEvent: onGitHubPushEvent,
     githubPayloadToFeed: githubPayloadToFeed,
     jiraPayloadToFeed: jiraPayloadToFeed,
-    ProcessGithubFromQueue: ProcessGithubFromQueue
+    // ProcessGithubFromQueue: ProcessGithubFromQueue,
+    ProcessHooksFromQueue: ProcessHooksFromQueue
 };

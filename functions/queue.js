@@ -17,6 +17,18 @@ function addHookToQueue(evt) {
   return ref.child(childPath).child(evt.params.pushId).set(args);
 }
 
+function processHookFromQueue(evt) {
+  const ref = evt.data.adminRef.root;
+  const source = evt.params.source;
+  const eventData = evt.data.val();
+
+  return ref.child('raw').child(source).child(evt.data.key).once('value', function(snapshot) {
+    const data = snapshot.val();
+    data._meta = eventData;
+    ref.child(paths.feedData).child(snapshot.key).set(data);
+  }).then( () => evt.data.ref.remove());
+}
+
 function getChildPath(source) {
   if (!source) {
     console.error('source is null');
@@ -37,5 +49,6 @@ function getChildPath(source) {
 }
 
 module.exports = {
-  addHookToQueue: addHookToQueue
+  addHookToQueue: addHookToQueue,
+  processHookFromQueue: processHookFromQueue
 };
