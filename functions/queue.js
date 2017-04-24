@@ -9,7 +9,7 @@ function addHookToQueue(evt) {
     timestamp: (new Date()).toISOString()
   };
 
-  const childPath = getChildPath(arg.source);
+  const childPath = getChildPath(args.source);
   if(!childPath) {
     console.error('source is null');
     return;
