@@ -43,8 +43,11 @@ function processHookFromQueue(evt) {
 
   return ref.child('raw').child(source).child(evt.data.key).once('value', function(snapshot) {
     const data = snapshot.val();
-    data._meta = Object.assign({}, eventData);
-    data._debug = true;
+    // fails when directly assigning object eventData (when deleting afterwards, it seems by reference)
+    data._meta = {
+      timestamp: eventData.timestamp,
+      source: eventData.source
+    };
     return ref.child(paths.feedData).child(snapshot.key).set(data);
   }).then(() => evt.data.ref.remove())
   ;
