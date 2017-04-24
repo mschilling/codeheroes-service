@@ -20,9 +20,9 @@ function addHookToQueue(evt) {
 // generic function to handle hooks items from queue
 function processHookFromQueue(evt) {
   // Only edit data when it is first created.
-  if (evt.data.previous.exists()) {
-    return;
-  }
+  // if (evt.data.previous.exists()) {
+  //   return;
+  // }
 
   const ref = evt.data.adminRef.root;
   const eventData = evt.data.val();
