@@ -37,7 +37,7 @@ const ProcessPayloads = functions.database.ref('/raw/{source}/{pushId}')
 const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
   .onWrite(queue.addHookToQueue);
 
-const ProcessHooksFromQueue = functions.database.ref('/queues/{source}-hooks/{pushId}')
+const ProcessHooksFromQueue = functions.database.ref('/queues/{hook}/{pushId}')
   .onWrite(queue.processHookFromQueue);
 
 // const ProcessGithubFromQueue = functions.database.ref('/queues/github-hooks/{pushId}')

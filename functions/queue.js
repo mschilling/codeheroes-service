@@ -10,7 +10,7 @@ function addHookToQueue(evt) {
   };
 
   const childPath = getChildPath(args.source);
-  if(!childPath) {
+  if (!childPath) {
     console.error('source is null');
     return;
   }
@@ -19,14 +19,33 @@ function addHookToQueue(evt) {
 
 function processHookFromQueue(evt) {
   const ref = evt.data.adminRef.root;
-  const source = evt.params.source;
+  const hook = evt.params.hook;
   const eventData = evt.data.val();
+  const source = null;
+
+  switch (hook) {
+    case 'github-hooks':
+      source = 'github';
+      break;
+    case 'jira-hooks':
+      source = 'jira';
+      break;
+    case 'jenkins-hooks':
+      source = 'jenkins';
+      break;
+    case 'travis-hooks':
+      source = 'travis';
+      break;
+    default:
+      // nothing to do?
+      return Promise.resolve();
+  }
 
   return ref.child('raw').child(source).child(evt.data.key).once('value', function(snapshot) {
     const data = snapshot.val();
     data._meta = eventData;
     ref.child(paths.feedData).child(snapshot.key).set(data);
-  }).then( () => evt.data.ref.remove());
+  }).then(() => evt.data.ref.remove());
 }
 
 function getChildPath(source) {
