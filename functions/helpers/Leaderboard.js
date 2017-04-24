@@ -43,8 +43,12 @@ function addScore(leaderboard, score) {
     item.count_commits += score.counters.commits;
   }
 
-  if(score.counters.pull_requests) {
-    item.count_pull_requests += score.counters.pull_requests;
+  if(score.counters.pull_requests_opened) {
+    item.count_pull_requests_opened += score.counters.pull_requests_opened;
+  }
+
+  if(score.counters.pull_requests_closed) {
+    item.count_pull_requests_closed += score.counters.pull_requests_closed;
   }
 
   if(score.counters.issues_closed) {
@@ -67,7 +71,8 @@ function newEntry(key) {
     count_commits: 0,
     count_pushes: 0,
     count_commits: 0,
-    count_pull_requests: 0,
+    count_pull_requests_opened: 0,
+    count_pull_requests_closed: 0,
     count_issues_opened: 0,
     count_issues_closed: 0
   };
