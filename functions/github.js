@@ -5,18 +5,6 @@ const Scores = require('./helpers/Scores');
 const fh = require('./helpers/FirebaseHelper');
 const eventTypes = require('./constants/github_event_types');
 const FeedHelper = require('./helpers/FeedHelper');
-const paths = require('./constants/firebase_paths');
-
-function onQueueItemAdded(evt) {
-  const ref = evt.data.adminRef.root;
-  const eventData = evt.data.val();
-
-  return ref.child('raw/github').child(evt.data.key).once('value', function(snapshot) {
-    const data = snapshot.val();
-    data._meta = eventData;
-    ref.child(paths.feedData).child(snapshot.key).set(data);
-  }).then( () => evt.data.ref.remove());
-}
 
 function onGitHubPushEvent(evt) {
   const ref = evt.data.adminRef.root;

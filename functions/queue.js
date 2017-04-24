@@ -17,6 +17,7 @@ function addHookToQueue(evt) {
   return ref.child(childPath).child(evt.params.pushId).set(args);
 }
 
+// generic function to handle hooks items from queue
 function processHookFromQueue(evt) {
   const ref = evt.data.adminRef.root;
   const hook = evt.params.hook;

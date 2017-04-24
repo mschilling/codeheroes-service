@@ -37,11 +37,9 @@ const ProcessPayloads = functions.database.ref('/raw/{source}/{pushId}')
 const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
   .onWrite(queue.addHookToQueue);
 
+// 1st process of queued hooks items
 const ProcessHooksFromQueue = functions.database.ref('/queues/{hook}/{pushId}')
   .onWrite(queue.processHookFromQueue);
-
-// const ProcessGithubFromQueue = functions.database.ref('/queues/github-hooks/{pushId}')
-//   .onWrite(github.onQueueItemAdded);
 
 /**
  * This Function updates the `/lastmodified` with the timestamp of the last write to `/chat/$message`.
