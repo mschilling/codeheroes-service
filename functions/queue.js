@@ -50,7 +50,7 @@ function processHookFromQueue(evt) {
     //   timestamp: eventData.timestamp,
     //   source: eventData.source
     // };
-    data.meta = eventData();
+    data.meta = eventData;
     return ref.child(paths.feedData).child(snapshot.key).set(data);
   }).then(() => evt.data.ref.remove())
   ;
