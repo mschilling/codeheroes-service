@@ -23,34 +23,10 @@ function processHookFromQueue(evt) {
   if (evt.data.previous.exists()) {
     return;
   }
-  // Exit when the data is deleted.
-  if (!evt.data.exists()) {
-    return;
-  }
 
   const ref = evt.data.adminRef.root;
-  // const hook = evt.params.hook;
   const eventData = evt.data.val();
-  // let source = null;
-  let source = evt.params.source;
-
-  // switch (hook) {
-  //   case 'github-hooks':
-  //     source = 'github';
-  //     break;
-  //   case 'jira-hooks':
-  //     source = 'jira';
-  //     break;
-  //   case 'jenkins-hooks':
-  //     source = 'jenkins';
-  //     break;
-  //   case 'travis-hooks':
-  //     source = 'travis';
-  //     break;
-  //   default:
-  //     // nothing to do?
-  //     return Promise.resolve();
-  // }
+  const source = evt.params.source;
 
   return ref.child('raw').child(source).child(evt.data.key).once('value')
     .then((snapshot) => {
