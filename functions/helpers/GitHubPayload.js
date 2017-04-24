@@ -63,6 +63,14 @@ function parseEventType(payload) {
   if (payload.pusher) {
     return eventTypes.push;
   } else if (payload.pull_request) {
+    switch (payload.action) {
+      case 'opened':
+        return eventTypes.pullRequestOpened;
+      case 'closed':
+        return eventTypes.pullRequestClosed;
+      case 'assigned':
+        return eventTypes.pullRequestAssigned;
+    }
     return eventTypes.pullRequest;
   } else if (payload.issue) {
     switch (payload.action) {
