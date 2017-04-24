@@ -38,7 +38,7 @@ const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
   .onWrite(queue.addHookToQueue);
 
 // 1st process of queued hooks items
-const ProcessHooksFromQueue = functions.database.ref('/queues/{source}-hooks/{pushId}')
+const ProcessHooksFromQueue = functions.database.ref('/queues/hooks/{source}/{pushId}')
   .onWrite(queue.processHookFromQueue);
 
 module.exports = {
