@@ -201,10 +201,15 @@ function getScores(obj) {
 
       scores = scores.concat( getScoresFromCommits(obj) );
       break;
-    case eventTypes.pullRequest:
-      score.points = scoreConstants.pullRequest;
+    case eventTypes.pullRequestOpened:
+      score.points = scoreConstants.pullRequestOpened;
       score.description = 'Great pull request! Keem \'em coming!';
-      score.counters.pull_requests = 1;
+      score.counters.pull_requests_opened = 1;
+      break;
+    case eventTypes.pullRequestClosed:
+      score.points = scoreConstants.pullRequestClosed;
+      score.description = 'Closed a PR; that\'s 2 points!';
+      score.counters.pull_requests_closed = 1;
       break;
     case eventTypes.issueClosed:
       score.points = scoreConstants.githubIssueClosed;
