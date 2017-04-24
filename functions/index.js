@@ -33,7 +33,7 @@ const ProcessPayloads = functions.database.ref('/raw/{source}/{pushId}')
     return ref.child('echo/events').child(evt.params.pushId).set(data);
   });
 
-const HookToQueue = functions.database.ref('/raw/jira/{pushId}')
+const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
   .onWrite(queue.addHookToQueue);
 
 // const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
