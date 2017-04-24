@@ -33,18 +33,12 @@ const ProcessPayloads = functions.database.ref('/raw/{source}/{pushId}')
     return ref.child('echo/events').child(evt.params.pushId).set(data);
   });
 
+// Add each incoming webhook to queue for further processing
 const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
   .onWrite(queue.addHookToQueue);
 
-// const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
-//   .onWrite((evt) => {
-//     const ref = evt.data.adminRef.root;
-//     const args = {
-//       source: evt.params.source,
-//       timestamp: (new Date()).toISOString()
-//     };
-//     return ref.child('/queues/hooks').child(evt.params.pushId).set(args);
-//   });
+const ProcessGithubFromQueue = functions.database.ref('/queues/github-hooks/{pushId}')
+  .onWrite(github.onQueueItemAdded);
 
 /**
  * This Function updates the `/lastmodified` with the timestamp of the last write to `/chat/$message`.
@@ -58,5 +52,6 @@ module.exports = {
     HookToQueue: HookToQueue,
     onGitHubPushEvent: onGitHubPushEvent,
     githubPayloadToFeed: githubPayloadToFeed,
-    jiraPayloadToFeed: jiraPayloadToFeed
+    jiraPayloadToFeed: jiraPayloadToFeed,
+    ProcessGithubFromQueue: ProcessGithubFromQueue
 };
