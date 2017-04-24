@@ -7,6 +7,7 @@ admin.initializeApp(functions.config().firebase);
 const github = require('./github');
 const jira = require('./jira');
 const user = require('./user');
+const queue = require('./queue');
 
 // Firebase Auth handlers
 const authNewUser = functions.auth.user().onCreate(user.createUser);
@@ -32,15 +33,18 @@ const ProcessPayloads = functions.database.ref('/raw/{source}/{pushId}')
     return ref.child('echo/events').child(evt.params.pushId).set(data);
   });
 
-const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
-  .onWrite((evt) => {
-    const ref = evt.data.adminRef.root;
-    const args = {
-      source: evt.params.source,
-      timestamp: (new Date()).toISOString()
-    };
-    return ref.child('/queues/hooks').child(evt.params.pushId).set(args);
-  });
+const HookToQueue = functions.database.ref('/raw/jira/{pushId}')
+  .onWrite(queue.addHookToQueue);
+
+// const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
+//   .onWrite((evt) => {
+//     const ref = evt.data.adminRef.root;
+//     const args = {
+//       source: evt.params.source,
+//       timestamp: (new Date()).toISOString()
+//     };
+//     return ref.child('/queues/hooks').child(evt.params.pushId).set(args);
+//   });
 
 /**
  * This Function updates the `/lastmodified` with the timestamp of the last write to `/chat/$message`.
