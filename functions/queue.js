@@ -20,9 +20,13 @@ function addHookToQueue(evt) {
 // generic function to handle hooks items from queue
 function processHookFromQueue(evt) {
   // Only edit data when it is first created.
-  // if (evt.data.previous.exists()) {
-  //   return;
-  // }
+  if (evt.data.previous.exists()) {
+    return;
+  }
+  // Exit when the data is deleted.
+  if (!evt.data.exists()) {
+    return;
+  }
 
   const ref = evt.data.adminRef.root;
   const eventData = evt.data.val();
@@ -30,7 +34,7 @@ function processHookFromQueue(evt) {
 
   return ref.child('raw').child(source).child(evt.data.key).once('value')
     .then((snapshot) => {
-      const data = snapshot.val();
+      const data = Object.assign({}, snapshot.val());
       data._meta = eventData;
       return ref.child(paths.feedData).child(snapshot.key).set(data);
     }).then(() => evt.data.ref.remove())
