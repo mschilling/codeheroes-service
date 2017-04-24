@@ -32,9 +32,26 @@ const ProcessPayloads = functions.database.ref('/raw/{source}/{pushId}')
     return ref.child('echo/events').child(evt.params.pushId).set(data);
   });
 
+const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
+  .onWrite((evt) => {
+    const ref = evt.data.adminRef.root;
+    const args = {
+      source: evt.params.source,
+      timestamp: (new Date()).toISOString()
+    };
+    return ref.child('/queues/hooks').child(evt.params.pushId).set(args);
+  });
+
+/**
+ * This Function updates the `/lastmodified` with the timestamp of the last write to `/chat/$message`.
+ */
+// exports.touch = functions.database.ref('/chat/{message}').onWrite(
+//     event => admin.database().ref('/lastmodified').set(event.timestamp));
+
 module.exports = {
     authNewUser: authNewUser,
     ProcessPayloads: ProcessPayloads,
+    HookToQueue: HookToQueue,
     onGitHubPushEvent: onGitHubPushEvent,
     githubPayloadToFeed: githubPayloadToFeed,
     jiraPayloadToFeed: jiraPayloadToFeed
