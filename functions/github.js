@@ -22,9 +22,11 @@ function onGitHubPushEvent(evt) {
       }
       if (github.eventType == eventTypes.push) {
         const score = new Scores(ref);
-        return github.distinctCommits.forEach(c => {
-          score.onCommit(c);
-        });
+        return github.distinctCommits.reduce(function(sequence, commit) {
+          return sequence.then(function() {
+            return score.onCommit(commit);
+          });
+        }, Promise.resolve());
       } else {
         Promise.resolve();
       }
