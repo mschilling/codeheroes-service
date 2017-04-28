@@ -37,9 +37,9 @@ const ProcessPayloads = functions.database.ref('/raw/{source}/{pushId}')
 const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
   .onWrite(queue.addHookToQueue);
 
-// 1st process of queued hooks items
-const ProcessHooksFromQueue = functions.database.ref('/queues/hooks/{source}/{pushId}')
-  .onWrite(queue.processHookFromQueue);
+// // 1st process of queued hooks items
+// const ProcessHooksFromQueue = functions.database.ref('/queues/hooks/{source}/{pushId}')
+//   .onWrite(queue.processHookFromQueue);
 
 module.exports = {
     authNewUser: authNewUser,
@@ -47,6 +47,6 @@ module.exports = {
     HookToQueue: HookToQueue,
     onGitHubPushEvent: onGitHubPushEvent,
     githubPayloadToFeed: githubPayloadToFeed,
-    jiraPayloadToFeed: jiraPayloadToFeed,
-    ProcessHooksFromQueue: ProcessHooksFromQueue
+    jiraPayloadToFeed: jiraPayloadToFeed
+    // ProcessHooksFromQueue: ProcessHooksFromQueue
 };
