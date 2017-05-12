@@ -9,7 +9,7 @@ function createUser(evt) {
     const userObj = {
         email: email,
         profile_picture: user.photoURL,
-        // providerData: user.providerData
+        providerData: user.providerData
     };
 
     if(user.displayName) {
