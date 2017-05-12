@@ -10,13 +10,11 @@ function createUser(evt) {
 
     const userObj = {
         name: displayName,
-        codeName: displayName,
         email: email,
-        notificationEnabled: false,
-        notificationTokens: {},
+        // notificationEnabled: false,
+        // notificationTokens: {},
         profile_picture: user.photoURL,
-        // github_username: 'user_' + user.username,
-        providerData: user.providerData
+        // providerData: user.providerData
     };
 
     admin.database().ref('users/'+user.uid).update(userObj);
