@@ -19,5 +19,4 @@ notifications:
   email: false
   slack:
     secure: C9NddPpauq8+kZEaS2Wf3SUcelGO3Qb4Mm56R1bC9WAGxptzxPa/pjFFzYhzc/ZaMguauzAgDxE1JDBjkkxafGFlPbqts63EjlFkiCfKBVbUnYHP88CL5jZIQ+of3XvuZvmVl8BTIZ6vO0n73IXLZywkNTsojJ2k6LgKNeiLbe4Ho70vHPgbEVwc+cVlariyUMTbOTrHazJAxtJFAr9J9/udZMx004gq/UbXBfcHAcL3T3cxZiR6QhvKtn9t0LQeaMHThzm9ESYyqExjkOtSxZll11n8qFNGoSYqKrBHV2iV7F5iSQ7r1koE3ouWZJY6fYfvZ1L2w3/6sZTiwZuf4ee+1tjsOfJjumPLfkFVS7EwYvWpEDfH27d9sFGWy9HavIKhrhyusWI6zdDbopHfSuk845N0oJ7sNfTHuMfn7vNeiJy2L7cktChluCI0ZAPbdEqjdQnLuiOzlG/suvmicYtRx0tWzeA8YFcyUZfSoV1d28xrBhYqr06JbCkyuDB05RkfXK9F3ZpW9YuHjVu6C/tP0f0VdDXwKwae4bF3nJAFifncAG/YDv5ytwcfP46f5+XayJa5RB9bAxPd6UcVNZuboSF9x9Vh0TtQy4CTelEt/vn9P88XDOBESnUSSV7h55bLya0AqIDBCx+3uxtIi/OoiLrrApgwv0MRzUm1erA=
-  webhooks:
-    - https://m4m-code-heroes.firebaseio.com/raw/travis.json
+  webhooks: "https://m4m-code-heroes.firebaseio.com/raw/travis.json"
