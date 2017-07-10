@@ -14,19 +14,19 @@ const authNewUser = functions.auth.user().onCreate(user.createUser);
 
 // Firebase Database handlers
 const onGitHubPushEvent = functions.database.ref('/raw/github/{pushId}')
-  .onWrite(github.onGitHubPushEvent);
+  .onCreate(github.onGitHubPushEvent);
 
 // Process GitHub raw data into feed entry
 const githubPayloadToFeed = functions.database.ref('/raw/github/{pushId}')
-  .onWrite(github.processGitHubPayload);
+  .onCreate(github.processGitHubPayload);
 
 // Process JIRA raw data into feed entry
 const jiraPayloadToFeed = functions.database.ref('/raw/jira/{pushId}')
-  .onWrite(jira.processJiraPayload);
+  .onCreate(jira.processJiraPayload);
 
 // Add each incoming webhook to queue for further processing
 const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
-  .onWrite(queue.addHookToQueue);
+  .onCreate(queue.addHookToQueue);
 
 // // 1st process of queued hooks items
 // const ProcessHooksFromQueue = functions.database.ref('/queues/hooks/{source}/{pushId}')
