@@ -24,15 +24,6 @@ const githubPayloadToFeed = functions.database.ref('/raw/github/{pushId}')
 const jiraPayloadToFeed = functions.database.ref('/raw/jira/{pushId}')
   .onWrite(jira.processJiraPayload);
 
-const ProcessPayloads = functions.database.ref('/raw/{source}/{pushId}')
-  .onWrite((evt) => {
-    const ref = evt.data.adminRef.root;
-    const data = evt.data.val();
-    data._source = evt.params.source;
-    data._timestamp = (new Date()).toISOString();
-    return ref.child('echo/events').child(evt.params.pushId).set(data);
-  });
-
 // Add each incoming webhook to queue for further processing
 const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
   .onWrite(queue.addHookToQueue);
@@ -43,7 +34,6 @@ const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
 
 module.exports = {
     authNewUser: authNewUser,
-    ProcessPayloads: ProcessPayloads,
     HookToQueue: HookToQueue,
     onGitHubPushEvent: onGitHubPushEvent,
     githubPayloadToFeed: githubPayloadToFeed,
