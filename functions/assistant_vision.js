@@ -1,19 +1,18 @@
 'use strict';
 
-let ApiAiApp = require('actions-on-google').ApiAiApp;
+const ApiAiApp = require('actions-on-google').ApiAiApp;
 
 const ACTIONS = {
   'tell.joke': {callback: tellJokeHandler}
 };
 
 function webhook(request, response) {
-
   const app = new ApiAiApp({request: request, response: response});
-  let intent = app.getIntent();
+  const intent = app.getIntent();
   app.handleRequest(ACTIONS[intent].callback);
-
 }
 
+// eslint-disable-next-line no-unused-vars
 function getRandomQuote(options) {
    firebase.database()
            .ref('quotes')
