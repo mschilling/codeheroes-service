@@ -8,6 +8,7 @@ const github = require('./github');
 const jira = require('./jira');
 const user = require('./user');
 const queue = require('./queue');
+const vision = require('./assistant_vision');
 
 // Firebase Auth handlers
 const authNewUser = functions.auth.user().onCreate(user.createUser);
@@ -32,11 +33,15 @@ const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
 // const ProcessHooksFromQueue = functions.database.ref('/queues/hooks/{source}/{pushId}')
 //   .onWrite(queue.processHookFromQueue);
 
+const assistant = functions.https
+  .onRequest(vision.webhook);
+
 module.exports = {
     authNewUser: authNewUser,
     HookToQueue: HookToQueue,
     onGitHubPushEvent: onGitHubPushEvent,
     githubPayloadToFeed: githubPayloadToFeed,
-    jiraPayloadToFeed: jiraPayloadToFeed
+    jiraPayloadToFeed: jiraPayloadToFeed,
+    assistant: assistant
     // ProcessHooksFromQueue: ProcessHooksFromQueue
 };
