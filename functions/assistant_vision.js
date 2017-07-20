@@ -36,6 +36,7 @@ function tellCommitInfoHandler(app) {
   const dayKey = timestamp.format('YYYYMMDD');
 
   ref.child(`/metrics/user/commits_per_day/${dayKey}`)
+    .orderByChild('lastUpdate')
     .limitToLast(1)
     .once('value')
     .then(function(snapshot) {
