@@ -34,9 +34,8 @@ const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
 // const ProcessHooksFromQueue = functions.database.ref('/queues/hooks/{source}/{pushId}')
 //   .onWrite(queue.processHookFromQueue);
 
-const assistant = functions.https
-  .onRequest(vision.webhook);
-
+// Firebase HTTP Triggers
+const assistant = functions.https.onRequest(vision.webhook);
 const travisWebhook = functions.https.onRequest(travis.webhook);
 
 module.exports = {
