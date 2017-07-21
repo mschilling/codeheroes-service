@@ -9,6 +9,7 @@ const jira = require('./jira');
 const user = require('./user');
 const queue = require('./queue');
 const vision = require('./assistant_vision');
+const travis = require('./webhooks/travis');
 
 // Firebase Auth handlers
 const authNewUser = functions.auth.user().onCreate(user.createUser);
@@ -36,12 +37,15 @@ const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
 const assistant = functions.https
   .onRequest(vision.webhook);
 
+const travisWebhook = functions.https.onRequest(travis.webhook);
+
 module.exports = {
     authNewUser: authNewUser,
     HookToQueue: HookToQueue,
     onGitHubPushEvent: onGitHubPushEvent,
     githubPayloadToFeed: githubPayloadToFeed,
     jiraPayloadToFeed: jiraPayloadToFeed,
-    assistant: assistant
+    assistant: assistant,
+    travisWebhook: travisWebhook
     // ProcessHooksFromQueue: ProcessHooksFromQueue
 };
