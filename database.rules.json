@@ -26,6 +26,11 @@
       "github": {
         ".read": "false",
         ".write": "true"
+      },
+      "travis": {
+        ".read": "false",
+        ".write": "true",
+        ".indexOn": "timestamp"
       }
     }
   }
