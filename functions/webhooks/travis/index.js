@@ -9,6 +9,7 @@ function webhook(req, res) {
   console.log('Request body: ' + JSON.stringify(req.body));
 
   if (req.method !== 'POST') {
+    res.send(`Method ${req.method} is not supported`);
     return;
   }
 
