@@ -27,7 +27,7 @@ function tellJokeHandler(app) {
     .then(function(snapshot) {
       const quotes = snapshot.val() || [];
       const randomQuote = quotes[Math.floor(Math.random()*quotes.length)];
-      app.ask(randomQuote);
+      app.tell(randomQuote);
     });
 }
 
@@ -35,15 +35,19 @@ function tellCommitInfoHandler(app) {
   const timestamp = moment();
   const dayKey = timestamp.format('YYYYMMDD');
 
-  ref.child(`/metrics/user/commits_per_day/${dayKey}`)
+  return ref.child(`/metrics/user/commits_per_day/${dayKey}`)
     .orderByChild('lastUpdate')
     .limitToLast(1)
     .once('value')
     .then(function(snapshot) {
-      snapshot.forEach(function(childSnapshot) {
+      return snapshot.forEach(function(childSnapshot) {
         const commit = childSnapshot.val();
         const message = `The last commit is by ${commit.name}. Here's the commit message: ${commit.message}`;
-        app.ask(message);
+        // app.data.slack = {text: message};
+        const result = app.buildRichResponse().addSimpleResponse(message, message);
+        console.log('result', result.items[0].simpleResponse);
+        // result.data.slack = {text: message};
+        app.ask(result);
       });
     });
 }
