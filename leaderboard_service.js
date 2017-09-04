@@ -21,7 +21,7 @@ const lb = new Leaderboard();
 let currentKey;
 let users = [];
 
-const weekId = '-KsbWW5KqusKEDm3ugEA';
+const weekId = '-KtAUq_6fA2yEWHa5Y3u';
 
 const query = ref.child('raw/github')
   .orderByKey()
