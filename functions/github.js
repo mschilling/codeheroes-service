@@ -9,6 +9,8 @@ const FeedHelper = require('./helpers/FeedHelper');
 function onGitHubPushEvent(snap, context) {
   const ref = snap.ref.root;
   const data = snap.val();
+  console.log(data);
+
   let appSettings;
 
   const github = new GitHubPayload(data);
@@ -36,7 +38,7 @@ function onGitHubPushEvent(snap, context) {
 function processGitHubPayload(snap, context) {
   const ref = snap.ref.root;
   FeedHelper.setTargetRef(ref.child('feed'));
-  return FeedHelper.addToFeed(snap.val());
+  return FeedHelper.addToFeed(snap);
 }
 
 module.exports = {
