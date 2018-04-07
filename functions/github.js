@@ -7,7 +7,7 @@ const eventTypes = require('./constants/github_event_types');
 const FeedHelper = require('./helpers/FeedHelper');
 
 function onGitHubPushEvent(evt) {
-  const ref = evt.data.adminRef.root;
+  const ref = evt.data.ref.root;
   const data = evt.data.val();
   let appSettings;
 
@@ -34,7 +34,7 @@ function onGitHubPushEvent(evt) {
 }
 
 function processGitHubPayload(evt) {
-  const ref = evt.data.adminRef.root;
+  const ref = evt.data.ref.root;
   FeedHelper.setTargetRef(ref.child('feed'));
   return FeedHelper.addToFeed(evt.data);
 }

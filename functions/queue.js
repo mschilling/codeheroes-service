@@ -3,7 +3,7 @@
 const paths = require('./constants/firebase_paths');
 
 function addHookToQueue(evt) {
-  const ref = evt.data.adminRef.root;
+  const ref = evt.data.ref.root;
   const args = {
     source: evt.params.source,
     timestamp: (new Date()).toISOString()
@@ -28,7 +28,7 @@ function processHookFromQueue(evt) {
     return;
   }
 
-  const ref = evt.data.adminRef.root;
+  const ref = evt.data.ref.root;
   const eventData = evt.data.val();
   const source = evt.params.source;
 
