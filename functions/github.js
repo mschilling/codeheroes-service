@@ -33,10 +33,10 @@ function onGitHubPushEvent(snap, context) {
     });
 }
 
-function processGitHubPayload(evt) {
-  const ref = evt.data.ref.root;
+function processGitHubPayload(snap, context) {
+  const ref = snap.ref.root;
   FeedHelper.setTargetRef(ref.child('feed'));
-  return FeedHelper.addToFeed(evt.data);
+  return FeedHelper.addToFeed(snap.val());
 }
 
 module.exports = {
