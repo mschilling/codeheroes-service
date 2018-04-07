@@ -14,11 +14,11 @@ function addHookToQueue(snap) {
     console.error('source is null');
     return;
   }
-  return ref.child(childPath).child(evt.params.pushId).set(args);
+  return ref.child(childPath).child(context.params.pushId).set(args);
 }
 
 // generic function to handle hooks items from queue
-function processHookFromQueue(snap) {
+function processHookFromQueue(snap, context) {
   // Only edit data when it is first created.
   if (snap.previous.exists()) {
     return;
@@ -28,16 +28,16 @@ function processHookFromQueue(snap) {
     return;
   }
 
-  const ref = evt.data.ref.root;
-  const eventData = evt.data.val();
-  const source = evt.params.source;
+  const ref = snap.ref.root;
+  const eventData = snap.val();
+  const source = context.params.source;
 
-  return ref.child('raw').child(source).child(evt.data.key).once('value')
+  return ref.child('raw').child(source).child(snap.key).once('value')
     .then((snapshot) => {
       const data = Object.assign({}, snapshot.val());
       data._meta = eventData;
       return ref.child(paths.feedData).child(snapshot.key).set(data);
-    }).then(() => evt.data.ref.remove())
+    }).then(() => snap.ref.remove())
     ;
 }
 
