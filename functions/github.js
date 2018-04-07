@@ -28,7 +28,7 @@ function onGitHubPushEvent(snap, context) {
           });
         }, Promise.resolve());
       } else {
-        Promise.resolve();
+        return Promise.resolve();
       }
     });
 }

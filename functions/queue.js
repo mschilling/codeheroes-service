@@ -2,8 +2,8 @@
 
 const paths = require('./constants/firebase_paths');
 
-function addHookToQueue(evt) {
-  const ref = evt.data.ref.root;
+function addHookToQueue(snap) {
+  const ref = snap.ref.root;
   const args = {
     source: evt.params.source,
     timestamp: (new Date()).toISOString()
@@ -18,9 +18,9 @@ function addHookToQueue(evt) {
 }
 
 // generic function to handle hooks items from queue
-function processHookFromQueue(evt) {
+function processHookFromQueue(snap) {
   // Only edit data when it is first created.
-  if (evt.data.previous.exists()) {
+  if (snap.previous.exists()) {
     return;
   }
   // Exit when the data is deleted.
