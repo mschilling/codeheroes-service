@@ -2,10 +2,10 @@
 
 const paths = require('./constants/firebase_paths');
 
-function addHookToQueue(snap) {
+function addHookToQueue(snap, context) {
   const ref = snap.ref.root;
   const args = {
-    source: evt.params.source,
+    source: context.params.source,
     timestamp: (new Date()).toISOString()
   };
 
