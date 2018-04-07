@@ -6,9 +6,9 @@ const fh = require('./helpers/FirebaseHelper');
 const eventTypes = require('./constants/github_event_types');
 const FeedHelper = require('./helpers/FeedHelper');
 
-function onGitHubPushEvent(evt) {
-  const ref = evt.data.ref.root;
-  const data = evt.data.val();
+function onGitHubPushEvent(snap, context) {
+  const ref = snap.ref.root;
+  const data = snap.val();
   let appSettings;
 
   const github = new GitHubPayload(data);
