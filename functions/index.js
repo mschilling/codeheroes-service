@@ -2,7 +2,7 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 
 const github = require('./github');
 const jira = require('./jira');
@@ -38,6 +38,18 @@ const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
 const assistant = functions.https.onRequest(vision.webhook);
 const travisWebhook = functions.https.onRequest(travis.webhook);
 
+// PubSub triggers
+const travisPubSub = functions.pubsub.topic('travis-events').onPublish(onTravisPubSub);
+
+function onTravisPubSub(message) {
+
+  console.log(message);
+  console.log(message.json);
+  console.log(message.json.name);
+
+  return Promise.resolve(true);
+}
+
 module.exports = {
     authNewUser: authNewUser,
     HookToQueue: HookToQueue,
@@ -45,6 +57,7 @@ module.exports = {
     githubPayloadToFeed: githubPayloadToFeed,
     jiraPayloadToFeed: jiraPayloadToFeed,
     assistant: assistant,
-    travisWebhook: travisWebhook
+    travisWebhook: travisWebhook,
+    travisPubSub: travisPubSub
     // ProcessHooksFromQueue: ProcessHooksFromQueue
 };
