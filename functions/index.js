@@ -10,6 +10,7 @@ const user = require('./user');
 const queue = require('./queue');
 const vision = require('./assistant_vision');
 const travis = require('./webhooks/travis');
+const TravisPubSub = require('./helpers/travis/pubsub');
 
 // Firebase Auth handlers
 const authNewUser = functions.auth.user().onCreate(user.createUser);
@@ -39,16 +40,7 @@ const assistant = functions.https.onRequest(vision.webhook);
 const travisWebhook = functions.https.onRequest(travis.webhook);
 
 // PubSub triggers
-const travisPubSub = functions.pubsub.topic('travis-events').onPublish(onTravisPubSub);
-
-function onTravisPubSub(message) {
-
-  console.log(message);
-  console.log(message.json);
-  console.log(message.json.name);
-
-  return Promise.resolve(true);
-}
+const travisPubSub = functions.pubsub.topic('travis-events').onPublish(TravisPubSub.onTravisPubSub);
 
 module.exports = {
     authNewUser: authNewUser,
