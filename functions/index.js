@@ -2,7 +2,7 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 
 const github = require('./github');
 const jira = require('./jira');
@@ -10,6 +10,7 @@ const user = require('./user');
 const queue = require('./queue');
 const vision = require('./assistant_vision');
 const travis = require('./webhooks/travis');
+const TravisPubSub = require('./helpers/travis/pubsub');
 
 // Firebase Auth handlers
 const authNewUser = functions.auth.user().onCreate(user.createUser);
@@ -38,6 +39,9 @@ const HookToQueue = functions.database.ref('/raw/{source}/{pushId}')
 const assistant = functions.https.onRequest(vision.webhook);
 const travisWebhook = functions.https.onRequest(travis.webhook);
 
+// PubSub triggers
+const travisPubSub = functions.pubsub.topic('travis-events').onPublish(TravisPubSub.onTravisPubSub);
+
 module.exports = {
     authNewUser: authNewUser,
     HookToQueue: HookToQueue,
@@ -45,6 +49,7 @@ module.exports = {
     githubPayloadToFeed: githubPayloadToFeed,
     jiraPayloadToFeed: jiraPayloadToFeed,
     assistant: assistant,
-    travisWebhook: travisWebhook
+    travisWebhook: travisWebhook,
+    travisPubSub: travisPubSub
     // ProcessHooksFromQueue: ProcessHooksFromQueue
 };

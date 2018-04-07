@@ -4,7 +4,7 @@ const moment = require('moment');
 const admin = require('firebase-admin');
 const ref = admin.database().ref();
 
-const ApiAiApp = require('actions-on-google').ApiAiApp;
+const ApiAiApp = require('actions-on-google').DialogflowApp;
 
 const ACTIONS = {
   'tell.joke': {callback: tellJokeHandler},
