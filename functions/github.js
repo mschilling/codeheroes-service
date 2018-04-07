@@ -9,7 +9,7 @@ const FeedHelper = require('./helpers/FeedHelper');
 function onGitHubPushEvent(snap, context) {
   const ref = snap.ref.root;
   const data = snap.val();
-  console.log(data);
+  console.log('data:', data);
 
   let appSettings;
 
