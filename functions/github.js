@@ -16,7 +16,7 @@ function onGitHubPushEvent(snap, context) {
   const github = new GitHubPayload(data);
   fh.initialize(ref);
 
-  fh.getAppSettings()
+  return fh.getAppSettings()
     .then((settings) => appSettings = settings)
     .then(() => {
       if (appSettings.excludeRepos.indexOf(github.repository.fullName) > -1) {
