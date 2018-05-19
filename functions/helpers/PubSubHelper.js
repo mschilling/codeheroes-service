@@ -2,6 +2,9 @@
 
 const PubSub = require('@google-cloud/pubsub');
 
+const GITHUB_DEFAULT_TOPIC = 'github-events';
+const TRAVIS_DEFAULT_TOPIC = 'travis-events';
+
 class PubSubHelper {
   constructor() {
     // Creates a client
@@ -12,26 +15,23 @@ class PubSubHelper {
   }
 
   publishTravisEvent(payload) {
-    return publish(payload, TRAVIS_DEFAULT_TOPIC);
+    return this.publish(payload, TRAVIS_DEFAULT_TOPIC);
   }
-}
 
-const GITHUB_DEFAULT_TOPIC = 'github-events';
-const TRAVIS_DEFAULT_TOPIC = 'travis-events';
+  publish(payload, topic) {
+    const dataBuffer = Buffer.from(JSON.stringify(payload));
 
-function publish(payload, topic) {
-  const dataBuffer = Buffer.from(JSON.stringify(payload));
-
-  pubsub
-    .topic(topic)
-    .publisher()
-    .publish(dataBuffer)
-    .then(messageId => {
-      console.log(`Message ${messageId} published.`, JSON.stringify(payload));
-    })
-    .catch(err => {
-      console.error('ERROR:', err);
-    });
+    this.pubsub
+      .topic(topic)
+      .publisher()
+      .publish(dataBuffer)
+      .then(messageId => {
+        console.log(`Message ${messageId} published.`, JSON.stringify(payload));
+      })
+      .catch(err => {
+        console.error('ERROR:', err);
+      });
+  }
 }
 
 module.exports = PubSubHelper;
