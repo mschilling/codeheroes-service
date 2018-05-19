@@ -1,10 +1,8 @@
 'use strict';
 
-// const moment = require('moment');
 const admin = require('firebase-admin');
 const ref = admin.database().ref();
 
-const TravisPayload = require('../../helpers/TravisPayload');
 const PubSubHelper = require('../../helpers/PubSubHelper');
 
 function webhook(req, res) {
@@ -19,11 +17,8 @@ function webhook(req, res) {
   const entry = createWebhookEntry('travis', req.body.payload);
   return ref.child('raw/travis').push(entry)
     .then(_ => {
-      const tp = new TravisPayload(JSON.parse(entry.data));
-      console.log('Travis Payload', tp.eventArgs());
-
       const pubsub = new PubSubHelper();
-      pubsub.publishTravisEvent(tp.eventArgs());
+      pubsub.publishTravisEvent(tp.buildEventArgs());
     })
     .then(_ => {
       res.send();

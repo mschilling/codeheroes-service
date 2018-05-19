@@ -9,8 +9,7 @@ class PubSubHelper {
   constructor() {
     // Creates a client
     this.pubsub = new PubSub({
-      projectId: 'm4m-code-heroes-dev',
-      // keyFilename: config.firebase.serviceAccount
+      projectId: 'm4m-code-heroes-dev'
     });
   }
 

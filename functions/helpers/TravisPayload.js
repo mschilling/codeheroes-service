@@ -40,7 +40,7 @@ class TravisPayload {
     return this._rawData.pull_request;
   }
 
-  eventArgs() {
+  buildEventArgs() {
     const obj = {};
 
     obj.id = this._rawData.id;
