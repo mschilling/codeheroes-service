@@ -42,7 +42,6 @@ class TravisPayload {
 
   buildEventArgs() {
     const obj = {};
-
     obj.id = this._rawData.id;
     obj.buildNumber = this._rawData.number;
     obj.startedAt = this._rawData.started_at;
@@ -54,7 +53,7 @@ class TravisPayload {
     obj.message = this._rawData.message;
 
     obj.github = {
-    // obj.commit_id = this.commit_id;
+      // obj.commit_id = this.commit_id;
       type: this.type,
       commit: this.commit,
       branch: this._rawData.branch,
@@ -74,6 +73,9 @@ class TravisPayload {
       language: this._rawData.config.language,
       hasDeploy: this._rawData.config.deploy ? true : false
     };
+
+    //new style
+    obj.repo = `${this.repository.owner_name}/${this._rawData.repository.name}`
 
     // return JSON.stringify(obj, null, '\t');
     return obj;
