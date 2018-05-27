@@ -24,7 +24,7 @@ function webhook(req, res) {
 
       const filters = {
         source: 'github',
-        name: payload.github.authorName
+        name: payload.authorName
       };
       console.log('filters', filters);
       return findAccount(filters).then( account => {
@@ -37,8 +37,29 @@ function webhook(req, res) {
     })
     .then(payload => {
       console.log('payload for pubsub helper', payload);
+
+      const activity = {
+        id: payload.id,
+        timestamp: entry.timestamp,
+        message: payload.message,
+        eventType: 'travis-events',
+        eventData: payload
+      };
+
+      if(payload.user) {
+        activity.user = payload.user;
+      }
+
+      if(payload.project) {
+        activity.project = payload.project;
+      }
+
+      if(payload.repo) {
+        activity.repo = payload.repo;
+      }
+
       const pubsub = new PubSubHelper();
-      pubsub.publishTravisEvent(payload);
+      pubsub.publishTravisEvent(activity);
     })
     .then(_ => {
       res.send();
