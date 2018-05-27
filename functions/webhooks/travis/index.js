@@ -36,8 +36,6 @@ function webhook(req, res) {
       });
     })
     .then(payload => {
-      console.log('payload for pubsub helper', payload);
-
       const activity = {
         id: payload.id,
         timestamp: entry.timestamp,
@@ -57,6 +55,8 @@ function webhook(req, res) {
       if(payload.repo) {
         activity.repo = payload.repo;
       }
+
+      console.log('payload for pubsub helper', activity);
 
       const pubsub = new PubSubHelper();
       pubsub.publishTravisEvent(activity);
