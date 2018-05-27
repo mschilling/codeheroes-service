@@ -64,7 +64,7 @@ class TravisPayload {
       authorEmail: this._rawData.author_email,
       committerName: this._rawData.committer_name,
       committerEmail: this._rawData.committer_email,
-      repoName: this.repository.name,
+      repoName: this._rawData.repository.name,
       repoOwner: this.repository.owner_name
     };
 
@@ -75,7 +75,8 @@ class TravisPayload {
       hasDeploy: this._rawData.config.deploy ? true : false
     };
 
-    return JSON.stringify(obj, null, '\t');
+    // return JSON.stringify(obj, null, '\t');
+    return obj;
   }
 }
 
