@@ -42,7 +42,6 @@ class TravisPayload {
 
   buildEventArgs() {
     const obj = {};
-
     obj.id = this._rawData.id;
     obj.buildNumber = this._rawData.number;
     obj.startedAt = this._rawData.started_at;
@@ -53,29 +52,26 @@ class TravisPayload {
     obj.resultMessage = this._rawData.result_message;
     obj.message = this._rawData.message;
 
-    obj.github = {
-    // obj.commit_id = this.commit_id;
-      type: this.type,
-      commit: this.commit,
-      branch: this._rawData.branch,
-      pullRequest: this.pull_request,
-      pullRequestNumber: this._rawData.pull_request_number,
-      authorName: this._rawData.author_name,
-      authorEmail: this._rawData.author_email,
-      committerName: this._rawData.committer_name,
-      committerEmail: this._rawData.committer_email,
-      repoName: this.repository.name,
-      repoOwner: this.repository.owner_name
-    };
+    obj.type = this.type;
+    obj.commit = this.commit;
+    obj.branch = this._rawData.branch;
+    obj.pullRequest = this.pull_request;
+    obj.pullRequestNumber = this._rawData.pull_request_number;
+    obj.authorName = this._rawData.author_name;
+    obj.authorEmail = this._rawData.author_email;
+    obj.committerName = this._rawData.committer_name;
+    obj.committerEmail = this._rawData.committer_email;
+    obj.repoName = this._rawData.repository.name;
+    obj.repoOwner = this.repository.owner_name;
 
-    obj.config = {
-      os: this._rawData.config.os,
-      dist: this._rawData.config.dist,
-      language: this._rawData.config.language,
-      hasDeploy: this._rawData.config.deploy ? true : false
-    };
+    obj.configOs = this._rawData.config.os;
+    obj.configDist = this._rawData.config.dist;
+    obj.configLanguage = this._rawData.config.language;
+    obj.configHasDeploy = this._rawData.config.deploy ? true : false;
 
-    return JSON.stringify(obj, null, '\t');
+    obj.repo = `${this.repository.owner_name}/${this._rawData.repository.name}`;
+
+    return obj;
   }
 }
 
