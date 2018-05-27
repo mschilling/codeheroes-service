@@ -20,7 +20,6 @@ function webhook(req, res) {
   return ref.child('raw/travis').push(entry)
     .then(_ => {
       const tp = new TravisPayload(JSON.parse(req.body.payload));
-      console.log('tp', tp);
       const payload = tp.buildEventArgs();
 
       const filters = {
@@ -29,7 +28,7 @@ function webhook(req, res) {
       };
       console.log('filters', filters);
       return findAccount(filters).then( account => {
-        console.log('account', account);
+        console.log('retrieved account', account);
         if(account !== null) {
           payload.user = account.userRef;
         }
