@@ -24,7 +24,8 @@ function webhook(req, res) {
 
       const filters = {
         source: 'github',
-        name: payload.authorName
+        name: payload.authorName,
+        email: payload.authorEmail
       };
       console.log('filters', filters);
       return findAccount(filters).then( account => {
@@ -75,7 +76,7 @@ function createWebhookEntry(type, payload) {
 }
 
 function findAccount(filters) {
-  const { source, username, name } = filters;
+  const { source, username, name, email } = filters;
   let query = admin.firestore().collection('accounts');
 
   if (source !== undefined) {
@@ -86,15 +87,37 @@ function findAccount(filters) {
     query = query.where('username', '==', username);
   }
 
-  if (name !== undefined) {
-    query = query.where('displayName', '==', name);
-  }
+  // if (name !== undefined) {
+  //   query = query.where('displayName', '==', name);
+  // }
 
-  return query.limit(1).get().then(snapshot => {
+  return query.limit(50).get().then(snapshot => {
     if (snapshot.size === 0) {
       return null;
     }
-    return snapshot.docs[0].data();
+
+    //extend with additional search
+    // if(name)
+    if (name !== undefined) {
+      query = query.where('displayName', '==', name);
+    }
+    const docs = [];
+    for(const doc of docs) {
+      docs.push(doc.data());
+    }
+
+    if(name) {
+      const docsCollection = docs.filter( p=>p.displayName === name);
+      if(docsCollection.length > 0) {
+        return docsCollection[0];
+      }
+    } else if(email) {
+      const docsCollection = docs.filter( p=>p.email === email);
+      if(docsCollection.length > 0) {
+        return docsCollection[0];
+      }
+    }
+    return null;
   });
 }
 
