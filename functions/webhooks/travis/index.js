@@ -28,9 +28,9 @@ function webhook(req, res) {
         email: payload.authorEmail
       };
       console.log('filters', filters);
-      return findAccount(filters).then( account => {
+      return findAccount(filters).then(account => {
         console.log('retrieved account', account);
-        if(account !== null) {
+        if (account !== null) {
           payload.user = account.userRef;
         }
         return payload;
@@ -45,15 +45,15 @@ function webhook(req, res) {
         eventData: payload
       };
 
-      if(payload.user) {
+      if (payload.user) {
         activity.user = payload.user;
       }
 
-      if(payload.project) {
+      if (payload.project) {
         activity.project = payload.project;
       }
 
-      if(payload.repo) {
+      if (payload.repo) {
         activity.repo = payload.repo;
       }
 
@@ -76,7 +76,7 @@ function createWebhookEntry(type, payload) {
 }
 
 function findAccount(filters) {
-  const { source, username, name, email } = filters;
+  const {source, username, name, email} = filters;
   let query = admin.firestore().collection('accounts');
 
   if (source !== undefined) {
@@ -87,33 +87,31 @@ function findAccount(filters) {
     query = query.where('username', '==', username);
   }
 
-  // if (name !== undefined) {
-  //   query = query.where('displayName', '==', name);
-  // }
+  console.log('query', query);
 
   return query.limit(50).get().then(snapshot => {
     if (snapshot.size === 0) {
+      console.log('no results', snapshot);
       return null;
     }
 
     //extend with additional search
-    // if(name)
-    if (name !== undefined) {
-      query = query.where('displayName', '==', name);
-    }
     const docs = [];
-    for(const doc of docs) {
+    for (const doc of snapshot.docs) {
       docs.push(doc.data());
     }
+    console.log('Retrieved accounts', docs);
 
-    if(name) {
-      const docsCollection = docs.filter( p=>p.displayName === name);
-      if(docsCollection.length > 0) {
+    if (name) {
+      const docsCollection = docs.filter(p => p.displayName === name);
+      if (docsCollection.length > 0) {
         return docsCollection[0];
       }
-    } else if(email) {
-      const docsCollection = docs.filter( p=>p.email === email);
-      if(docsCollection.length > 0) {
+    }
+
+    if (email) {
+      const docsCollection = docs.filter(p => p.email === email);
+      if (docsCollection.length > 0) {
         return docsCollection[0];
       }
     }
