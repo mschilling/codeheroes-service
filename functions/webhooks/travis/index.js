@@ -87,20 +87,16 @@ function findAccount(filters) {
     query = query.where('username', '==', username);
   }
 
-  console.log('query', query);
-
   return query.limit(50).get().then(snapshot => {
     if (snapshot.size === 0) {
-      console.log('no results', snapshot);
       return null;
     }
 
-    //extend with additional search
+    // extend with additional search
     const docs = [];
     for (const doc of snapshot.docs) {
       docs.push(doc.data());
     }
-    console.log('Retrieved accounts', docs);
 
     if (name) {
       const docsCollection = docs.filter(p => p.displayName === name);
