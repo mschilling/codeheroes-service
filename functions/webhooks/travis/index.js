@@ -111,6 +111,14 @@ function findAccount(filters) {
         return docsCollection[0];
       }
     }
+
+    if (name) {
+      const docsCollection = docs.filter(p => p.username === name);
+      if (docsCollection.length > 0) {
+        return docsCollection[0];
+      }
+    }
+
     return null;
   });
 }
