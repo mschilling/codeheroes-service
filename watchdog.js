@@ -25,7 +25,7 @@ function start() {
 
   githubRef
     .orderByKey()
-    .limitToLast(50)
+    .limitToLast(2)
     .on('child_added', handleGithubPayload);
 
 }
