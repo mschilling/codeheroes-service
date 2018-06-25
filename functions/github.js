@@ -37,6 +37,7 @@ function onGitHubPushEvent(snap, context) {
       }
     })
     .then( () => {
+      console.log('Invoke ArwinAPI');
       return arwinApi.pushGithubPayload(data);
     });
 }
