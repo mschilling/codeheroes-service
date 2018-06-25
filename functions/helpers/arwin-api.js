@@ -13,8 +13,8 @@ const client = axios.create({
 });
 
 class ArwinApi {
-  pushGithubPayload(github) {
-    console.log('GitHub payload', github);
+  pushGithubPayload(payload, github) {
+    console.log('GitHub payload', payload, github);
     let customHeader = {};
 
     switch (github.eventType) {
