@@ -5,6 +5,9 @@ const Scores = require('./helpers/Scores');
 const fh = require('./helpers/FirebaseHelper');
 const eventTypes = require('./constants/github_event_types');
 const FeedHelper = require('./helpers/FeedHelper');
+const ArwinApi = require('./helpers/arwin-api');
+
+const arwinApi = new ArwinApi();
 
 function onGitHubPushEvent(snap, context) {
   const ref = snap.ref.root;
@@ -32,6 +35,9 @@ function onGitHubPushEvent(snap, context) {
       } else {
         return Promise.resolve();
       }
+    })
+    .then( () => {
+      return arwinApi.pushGithubPayload(data);
     });
 }
 

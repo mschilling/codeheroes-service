@@ -2,8 +2,8 @@
 
 require('dotenv/config');
 
-const GitHubPayload = require('./functions/helpers/GitHubPayload');
-const eventTypes = require('./functions/constants/github_event_types');
+const GitHubPayload = require('../functions/helpers/GitHubPayload');
+const eventTypes = require('../functions/constants/github_event_types');
 
 const axios = require('axios');
 const BASE_URL = 'http://35.233.33.90:8080/webhook';
