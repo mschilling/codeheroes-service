@@ -3,13 +3,14 @@
 require('dotenv').config({ silent: true });
 const config = require('./config');
 const chalk = require('chalk');
-const firebase = require('firebase');
-firebase.initializeApp({
-  serviceAccount: config.firebase.serviceAccount,
+const admin = require('firebase-admin');
+const serviceAccount = require(config.firebase.serviceAccount);
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
   databaseURL: config.firebase.databaseURL
 });
 
-const ref = firebase.database().ref();
+const ref = admin.database().ref();
 const ghEventTypes = require('./functions/constants/github_event_types');
 const GitHubPayload = require('./functions/helpers/GitHubPayload');
 const Leaderboard = require('./functions/helpers/Leaderboard');
@@ -21,7 +22,7 @@ const lb = new Leaderboard();
 let currentKey;
 let users = [];
 
-const weekId = '-LD5RUpgxsJBOGvIU_DS';
+const weekId = '-LFnZNHBsNLiebI6Xm3H_2';
 
 const query = ref.child('raw/github')
   .orderByKey()
