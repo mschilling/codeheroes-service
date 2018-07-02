@@ -20,19 +20,6 @@ class ArwinApi {
     switch (github.eventType) {
       case eventTypes.push:
         customHeader = { 'x-github-event': 'push' };
-
-        // if(github.distinctCommits.length === 0) {
-        //   console.log('Ignore Push', payload);
-        //   return Promise.resolve(true);
-        // }
-
-        // for( var i = 0; i < (payload.commits || []).length; i++) {
-        //   let item = payload.commits[i];
-        //   if(!item.added) item.added = [];
-        //   if(!item.removed) item.removed = [];
-        //   if(!item.modified) item.modified = [];
-        // }
-
         break;
       case eventTypes.pullRequestOpened:
       case eventTypes.pullRequestClosed:
