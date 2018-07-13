@@ -6,6 +6,7 @@ const ref = admin.database().ref();
 const PubSubHelper = require('../../helpers/PubSubHelper');
 const TravisPayload = require('../../helpers/TravisPayload');
 
+const axios = require('axios');
 
 function webhook(req, res) {
   console.log('Request headers: ' + JSON.stringify(req.headers));
@@ -14,6 +15,21 @@ function webhook(req, res) {
   if (req.method !== 'POST') {
     res.send(`Method ${req.method} is not supported`);
     return;
+  }
+
+
+  if (req.method === 'POST') {
+    console.log('Travis: will forward payload');
+
+    const client = axios.create({
+      baseURL: 'https://events.codeheroes.move4mobile.io'
+    });
+
+    return client.post('/webhooks/travis', payload, {
+      headers: req.headers
+    }).catch( (error) => {
+      console.log('error', error);
+    });
   }
 
   const entry = createWebhookEntry('travis', req.body.payload);
