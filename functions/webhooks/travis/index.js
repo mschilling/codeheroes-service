@@ -25,7 +25,7 @@ function webhook(req, res) {
       baseURL: 'https://events.codeheroes.move4mobile.io'
     });
 
-    return client.post('/webhooks/travis', payload, {
+    return client.post('/webhooks/travis', req.body, {
       headers: req.headers
     }).catch( (error) => {
       console.log('error', error);
