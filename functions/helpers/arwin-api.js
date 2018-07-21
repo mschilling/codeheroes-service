@@ -14,6 +14,10 @@ const client = axios.create({
 
 class ArwinApi {
   pushGithubPayload(payload, github) {
+    if(payload || github) {
+      console.log('ArwinApi disabled', payload, github);
+      return;
+    }
     console.log('GitHub payload', payload, github);
     let customHeader = {};
 
