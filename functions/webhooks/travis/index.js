@@ -18,19 +18,19 @@ function webhook(req, res) {
   }
 
 
-  if (req.method === 'POST') {
-    console.log('Travis: will forward payload');
+  // if (req.method === 'POST') {
+  //   console.log('Travis: will forward payload');
 
-    const client = axios.create({
-      baseURL: 'https://events.codeheroes.move4mobile.io'
-    });
+  //   const client = axios.create({
+  //     baseURL: 'https://events.codeheroes.move4mobile.io'
+  //   });
 
-    return client.post('/webhooks/travis', req.body, {
-      headers: req.headers
-    }).catch( (error) => {
-      console.log('error', error);
-    });
-  }
+  //   return client.post('/webhooks/travis', req.body, {
+  //     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+  //   }).catch( (error) => {
+  //     console.log('error', error);
+  //   });
+  // }
 
   const entry = createWebhookEntry('travis', req.body.payload);
   return ref.child('raw/travis').push(entry)
@@ -75,8 +75,8 @@ function webhook(req, res) {
 
       console.log('payload for pubsub helper', activity);
 
-      const pubsub = new PubSubHelper();
-      pubsub.publishTravisEvent(activity);
+      // const pubsub = new PubSubHelper();
+      // pubsub.publishTravisEvent(activity);
     })
     .then(_ => {
       res.send();
